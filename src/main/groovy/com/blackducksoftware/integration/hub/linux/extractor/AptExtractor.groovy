@@ -38,11 +38,15 @@ class AptExtractor {
 
     BdioComponentDetails extract(String inputLine) {
         def details = null
-
+        logger.info("input:{}",inputLine)
         if (inputLine.contains(' ')) {
             def (packageName,version) = inputLine.split(" ")
-            def externalIdentifier = createExternalIdentifier(packageName, version)
-            details = new BdioComponentDetails(name: packageName, version: version, externalIdentifier: externalIdentifier)
+            def index = packageName.indexOf("/")
+            if(index > 0) {
+                def component = packageName.substring(0,index)
+                def externalIdentifier = createExternalIdentifier(packageName, version)
+                details = new BdioComponentDetails(name: packageName, version: version, externalIdentifier: externalIdentifier)
+            }
         }
 
         details
