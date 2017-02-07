@@ -30,8 +30,6 @@ class YumExtractor extends Extractor {
             if (line != null) {
                 if ('Installed Packages' == line) {
                     startOfComponents = true
-                } else if ('Available Packages' == line) {
-                    return components
                 } else if (startOfComponents) {
                     componentColumns.addAll(line.tokenize(' '))
                     if (componentColumns.size() == 3) {
