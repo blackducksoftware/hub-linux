@@ -11,11 +11,13 @@
  */
 package com.blackducksoftware.integration.hub.linux.extractor
 
+import org.springframework.stereotype.Component
+
 import com.blackducksoftware.bdio.model.ExternalIdentifier
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 
+@Component
 class YumExtractor {
-
 
     List<BdioComponentDetails> extract(File yumOutput) {
         def components = []
@@ -43,20 +45,16 @@ class YumExtractor {
             String name =nameArch.substring(0, nameArch.lastIndexOf("."));
             String architecture = nameArch.substring(nameArch.lastIndexOf(".") + 1);
 
-            return buildComponent(name,  version,  architecture)
+            def externalIdentifier = createExternalIdentifier(name, version, architecture)
+            return new BdioComponentDetails(name: name, version: version, externalIdentifier: externalIdentifier)
         }
     }
 
-    private BdioComponentDetails buildComponent(String name, String version, String architecture) {
-        def component = new BdioComponentDetails();
-        component.id = UUID.randomUUID()
-        component.name = name
-        component.version = version
+    ExternalIdentifier createExternalIdentifier(String name, String version, String architecture) {
+        def externalIdentifier = new ExternalIdentifier();
+        externalIdentifier.setExternalSystemTypeId('centos');
+        externalIdentifier.setExternalId("$name/$version/$architecture");
 
-        def ExternalIdentifier externalId = new ExternalIdentifier();
-        externalId.setExternalId("$name/$version/$architecture");
-        component.setExternalIdentifier(externalId)
-
-        component
+        externalIdentifier
     }
 }
