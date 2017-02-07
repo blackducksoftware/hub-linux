@@ -1,7 +1,5 @@
 package com.blackducksoftware.integration.hub.linux
 
-import groovy.io.FileType
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -12,6 +10,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.extractor.Extractor
+import com.blackducksoftware.integration.hub.util.HostnameHelper
+
+import groovy.io.FileType
 
 @Component
 class HubLinuxManager {
@@ -31,7 +32,7 @@ class HubLinuxManager {
 
     void performInspection() {
         String operatingSystem = "CentOS"
-        String projectName = operatingSystem
+        String projectName = operatingSystem + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
 
         def filenameFilter = [accept: {File dir, String name -> name.endsWith(".txt")}] as FilenameFilter
