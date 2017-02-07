@@ -11,7 +11,7 @@ Apache License 2.0
 
 
 ## Package Managers ##
-- Yum
+- yum
 - Home Brew
 - npm
-- appGet
+- apt-get
