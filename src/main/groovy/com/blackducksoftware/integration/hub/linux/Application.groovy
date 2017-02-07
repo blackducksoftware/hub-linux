@@ -18,6 +18,9 @@ class Application {
     @Autowired
     HubClient hubClient
 
+    @Autowired
+    HubLinuxManager hubLinuxManager
+
     static void main(final String[] args) {
         new SpringApplicationBuilder(Application.class).logStartupInfo(false).run(args)
     }
@@ -32,6 +35,8 @@ class Application {
         } catch (Exception e) {
             println("Your Hub configuration is not valid: ${e.message}")
         }
+
+        hubLinuxManager.performInspection()
     }
 
     @Bean

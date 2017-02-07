@@ -16,43 +16,45 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import com.blackducksoftware.bdio.model.ExternalIdentifier
 import com.blackducksoftware.bdio.model.ExternalIdentifierBuilder
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 
 @Component
-class AptExtractor {
+class AptExtractor extends Extractor {
     private final Logger logger = LoggerFactory.getLogger(AptExtractor.class)
 
     @Autowired
     ExternalIdentifierBuilder externalIdentifierBuilder
 
-    List<BdioComponentDetails> extract(File inputFile) {
+    @Override
+    boolean shouldAttemptExtract(File file) {
+        file.name.endsWith('_apt.txt')
+    }
+
+    @Override
+    List<BdioComponentDetails> extract(String operatingSystem, File inputFile) {
         def components = []
+
         inputFile.eachLine { line ->
-            components.add(extract(line))
+            def component = extract(operatingSystem, line)
+            if (component != null) {
+                components.add(component)
+            }
         }
 
         components
     }
 
-    BdioComponentDetails extract(String inputLine) {
-        def details = null
+    @Override
+    BdioComponentDetails extract(String operatingSystem, String inputLine) {
+        def bdioComponentDetails = null
 
         if (inputLine.contains(' ')) {
-            def (packageName,version) = inputLine.split(" ")
-            def externalIdentifier = createExternalIdentifier(packageName, version)
-            details = new BdioComponentDetails(name: packageName, version: version, externalIdentifier: externalIdentifier)
+            def (packageName, version) = inputLine.split(" ")
+            String externalId = "${packageName}/${version}"
+            bdioComponentDetails = createBdioComponentDetails(operatingSystem, packageName, version, externalId)
         }
 
-        details
-    }
-
-    ExternalIdentifier createExternalIdentifier(String packageName, String version) {
-        def externalIdentifier = new ExternalIdentifier();
-        externalIdentifier.setExternalSystemTypeId('ubuntu');
-        externalIdentifier.setExternalId("${packageName}/${version}");
-
-        externalIdentifier
+        bdioComponentDetails
     }
 }
