@@ -30,22 +30,12 @@ abstract class Creator {
     boolean isCommandAvailable(long timeout) {
         def available = false;
         try {
-            def stdOut = new StringBuilder();
-            def stdErr = new StringBuilder();
             def proc = testCommand.execute()
-            proc.consumeProcessOutput(stdOut,stdErr)
             proc.waitForOrKill(timeout)
 
             if(proc.exitValue() == 0){
                 available = true
             }
-            //            if(stdOut.length() > 0) {
-            //                available = true
-            //            }
-            //
-            //            if(stdErr.length() > 0) {
-            //                available = false
-            //            }
         } catch(Exception e) {
             logger.error("Error executing test command {}",testCommand,e)
         }
@@ -55,14 +45,11 @@ abstract class Creator {
 
     void writeOutputFile(File file, long timeout) {
         try {
-            def stdOut = new StringBuilder();
-            def stdErr = new StringBuilder();
             def proc = executionCommand.execute()
-            proc.consumeProcessOutput(stdOut,stdErr)
             proc.waitForOrKill(timeout)
 
             file.withWriter { out ->
-                out.println stdOut.toString()
+                proc.in.text
             }
         } catch(Exception e) {
             logger.error("Error executing command {}",executionCommand,e)
