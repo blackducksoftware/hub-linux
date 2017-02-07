@@ -19,9 +19,13 @@ import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 @Component
 class YumExtractor {
 
+
     List<BdioComponentDetails> extract(File yumOutput) {
         def components = []
         boolean startOfComponents = false;
+
+        def componentColumns = []
+
         yumOutput.eachLine { line ->
             if(line != null){
                 if('Installed Packages' == line){
@@ -29,9 +33,17 @@ class YumExtractor {
                 } else if('Available Packages' == line){
                     return components
                 } else if(startOfComponents){
-                    BdioComponentDetails componentDetails = extract(line.trim())
-                    if(componentDetails != null){
-                        components.add(componentDetails)
+                    componentColumns.addAll(line.trim().tokenize(" "));
+                    if(componentColumns.size() == 3){
+
+                        String nameArch = componentColumns.get(0);
+                        String version = componentColumns.get(1);
+                        String name =nameArch.substring(0, nameArch.lastIndexOf("."));
+                        String architecture = nameArch.substring(nameArch.lastIndexOf(".") + 1);
+
+                        def externalIdentifier = createExternalIdentifier(name, version, architecture)
+                        components.add(new BdioComponentDetails(name: name, version: version, externalIdentifier: externalIdentifier))
+                        componentColumns = []
                     }
                 }
             }
@@ -39,16 +51,6 @@ class YumExtractor {
         components
     }
 
-    BdioComponentDetails extract(String yumOutputLine) {
-        def (nameArch, version, info) = yumOutputLine.tokenize(" ")
-        if(nameArch != null && version != null){
-            String name =nameArch.substring(0, nameArch.lastIndexOf("."));
-            String architecture = nameArch.substring(nameArch.lastIndexOf(".") + 1);
-
-            def externalIdentifier = createExternalIdentifier(name, version, architecture)
-            return new BdioComponentDetails(name: name, version: version, externalIdentifier: externalIdentifier)
-        }
-    }
 
     ExternalIdentifier createExternalIdentifier(String name, String version, String architecture) {
         def externalIdentifier = new ExternalIdentifier();
