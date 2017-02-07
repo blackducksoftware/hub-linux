@@ -12,6 +12,5 @@ Apache License 2.0
 
 ## Package Managers ##
 - yum
-- Home Brew
 - rpm
 - apt-get
