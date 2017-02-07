@@ -14,20 +14,20 @@ package com.blackducksoftware.integration.hub.linux.creator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class Creator {
+abstract class Creator {
     private final Logger logger = LoggerFactory.getLogger(getClass())
 
-    def timeout = 12000 // 2 minutes
-    def testCommand
-    def executionCommand
-    def fileName
+    String testCommand
+    String executionCommand
 
-    Creator(testCommand, executionCommand) {
+    Creator(String testCommand, String executionCommand) {
         this.testCommand = testCommand
         this.executionCommand = executionCommand
     }
 
-    boolean isCommandAvailable() {
+    abstract String getFilenameSuffix()
+
+    boolean isCommandAvailable(long timeout) {
         def available = false;
         try {
             def stdOut = new StringBuilder();
@@ -51,8 +51,7 @@ class Creator {
         available
     }
 
-    File createOutputFile(def parentPath, def fileName) {
-        def file = new File(parentPath,fileName)
+    void writeOutputFile(File file, long timeout) {
         try {
             def stdOut = new StringBuilder();
             def stdErr = new StringBuilder();
@@ -66,7 +65,5 @@ class Creator {
         } catch(Exception e) {
             logger.error("Error executing command {}",executionCommand,e)
         }
-
-        file
     }
 }

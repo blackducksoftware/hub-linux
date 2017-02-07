@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
+import com.blackducksoftware.integration.hub.linux.creator.Creator
 import com.blackducksoftware.integration.hub.linux.extractor.Extractor
 import com.blackducksoftware.integration.hub.util.HostnameHelper
 
@@ -21,6 +22,9 @@ class HubLinuxManager {
     @Value('${working.directory}')
     String workingDirectoryPath
 
+    @Value('${command.timeout}')
+    long commandTimeout
+
     @Autowired
     HubClient hubClient
 
@@ -28,18 +32,28 @@ class HubLinuxManager {
     BdioFileWriter bdioFileWriter
 
     @Autowired
+    List<Creator> creators
+
+    @Autowired
     List<Extractor> extractors
 
     void performInspection() {
-        String operatingSystem = "CentOS"
+        String operatingSystem = System.getProperty('os.name')
         String projectName = operatingSystem + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
 
-        def filenameFilter = [accept: {File dir, String name -> name.endsWith(".txt")}] as FilenameFilter
-
         def workingDirectory = new File(workingDirectoryPath)
+        workingDirectory.mkdirs()
+
+        creators.each {
+            if (it.isCommandAvailable(commandTimeout)) {
+                String filename = "${operatingSystem}${it.filenameSuffix}"
+                File outputFile = new File(workingDirectory, filename)
+                it.writeOutputFile(outputFile, commandTimeout)
+            }
+        }
+
         def bdioComponentDetails = []
-        File[] files = workingDirectory.listFiles(filenameFilter)
         workingDirectory.eachFile(FileType.FILES) { file ->
             println file.name
             extractors.each { extractor ->

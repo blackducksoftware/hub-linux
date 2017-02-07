@@ -11,11 +11,15 @@
  */
 package com.blackducksoftware.integration.hub.linux.creator
 
+import org.springframework.stereotype.Component
 
+@Component
 class AptCreator extends Creator {
-    def timeout = 12000 // 2 minutes
-
     AptCreator() {
         super('apt --version', 'apt --installed list')
+    }
+
+    String getFilenameSuffix() {
+        '_apt.txt'
     }
 }
