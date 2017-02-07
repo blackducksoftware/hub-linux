@@ -36,14 +36,16 @@ abstract class Creator {
             proc.consumeProcessOutput(stdOut,stdErr)
             proc.waitForOrKill(timeout)
 
-
-            if(stdOut.length() > 0) {
+            if(proc.exitValue() == 0){
                 available = true
             }
-
-            if(stdErr.length() > 0) {
-                available = false
-            }
+            //            if(stdOut.length() > 0) {
+            //                available = true
+            //            }
+            //
+            //            if(stdErr.length() > 0) {
+            //                available = false
+            //            }
         } catch(Exception e) {
             logger.error("Error executing test command {}",testCommand,e)
         }
