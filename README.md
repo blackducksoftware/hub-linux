@@ -8,3 +8,10 @@ Hub Linux
 
 ## License ##
 Apache License 2.0
+
+
+## Package Managers ##
+- Yum
+- Home Brew
+- npm
+- appGet
