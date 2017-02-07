@@ -1,38 +1,39 @@
-plugins {
-    id 'groovy'
-    id 'maven'
-    id 'eclipse'
+buildscript {
+    repositories { mavenCentral() }
+    dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.3.RELEASE") }
 }
 
-compileJava.options.encoding = 'UTF-8'
-compileGroovy.options.encoding = 'UTF-8'
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'eclipse'
 
-allprojects {
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_1_7
+tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+tasks.withType(GroovyCompile) { options.encoding = 'UTF-8' }
+
+task "createDirs" << {
+    sourceSets*.java.srcDirs*.each { it.mkdirs() }
+    sourceSets*.groovy.srcDirs*.each { it.mkdirs() }
+    sourceSets*.resources.srcDirs*.each { it.mkdirs() }
 }
+
+group = 'com.blackducksoftware.integration'
+version = '0.0.1-SNAPSHOT'
+description = ''
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
-    mavenLocal()
     mavenCentral()
-    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-    maven { url 'http://jcenter.bintray.com' }
-    maven { url 'https://updates.suite.blackducksoftware.com/integrations' }
+    mavenLocal()
 }
-
-group='com.blackducksoftware.integration'
-version='1.0.0-SNAPSHOT'
-description='Black Duck Hub Linux Integration'
 
 dependencies {
-	compile gradleApi()
-	compile localGroovy()
-}
+    compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'commons-io:commons-io:2.5'
 
-sourceSets {
-    main {
-        java { srcDir 'src/main/java' }
-        resources { srcDir 'src/main/resources' }
-    }
-}
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.codehaus.groovy:groovy-all:2.4.8'
 
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
