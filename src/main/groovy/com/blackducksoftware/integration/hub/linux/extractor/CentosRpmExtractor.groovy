@@ -41,14 +41,14 @@ class CentosRpmExtractor {
 
         if (valid(inputLine)) {
 
-            final int lastDotIndex = inputLine.lastIndexOf('.')
-            final String arch = inputLine.substring(lastDotIndex + 1)
-            final int lastDashIndex = inputLine.lastIndexOf('-')
-            final String nameVersion = inputLine.substring(0, lastDashIndex)
-            final int secondToLastDashIndex = nameVersion.lastIndexOf('-')
+            def lastDotIndex = inputLine.lastIndexOf('.')
+            def arch = inputLine.substring(lastDotIndex + 1)
+            def lastDashIndex = inputLine.lastIndexOf('-')
+            def nameVersion = inputLine.substring(0, lastDashIndex)
+            def secondToLastDashIndex = nameVersion.lastIndexOf('-')
 
-            final String versionRelease = inputLine.substring(secondToLastDashIndex + 1, lastDotIndex)
-            final String artifact = inputLine.substring(0, secondToLastDashIndex)
+            def versionRelease = inputLine.substring(secondToLastDashIndex + 1, lastDotIndex)
+            def artifact = inputLine.substring(0, secondToLastDashIndex)
 
             def externalIdentifier = createExternalIdentifier(artifact, versionRelease, arch)
             details = new BdioComponentDetails(name: artifact, version: versionRelease, externalIdentifier: externalIdentifier)
