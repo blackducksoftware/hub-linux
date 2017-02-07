@@ -44,6 +44,9 @@ class YumExtractor {
                         def externalIdentifier = createExternalIdentifier(name, version, architecture)
                         components.add(new BdioComponentDetails(name: name, version: version, externalIdentifier: externalIdentifier))
                         componentColumns = []
+                    } else  if(componentColumns.size() > 3){
+                        //FIXME
+                        throw new RuntimeException ("Parsing multi-line components has failed.");
                     }
                 }
             }
