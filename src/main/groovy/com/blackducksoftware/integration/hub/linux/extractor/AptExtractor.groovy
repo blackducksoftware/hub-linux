@@ -50,8 +50,12 @@ class AptExtractor extends Extractor {
 
         if (inputLine.contains(' ')) {
             def (packageName, version) = inputLine.split(" ")
-            String externalId = "${packageName}/${version}"
-            bdioComponentDetails = createBdioComponentDetails(operatingSystem, packageName, version, externalId)
+            def index = packageName.indexOf("/")
+            if(index > 0) {
+                def component = packageName.substring(0,index)
+                String externalId = "${component}/${version}"
+                bdioComponentDetails = createBdioComponentDetails(operatingSystem, packageName, version, externalId)
+            }
         }
 
         bdioComponentDetails
