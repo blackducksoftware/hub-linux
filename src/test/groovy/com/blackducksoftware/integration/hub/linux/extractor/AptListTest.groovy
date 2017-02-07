@@ -16,6 +16,11 @@ class AptListTest {
         extractAptComponentsFromFile("ubuntu_apt_package_list_2.txt");
     }
 
+    @Test
+    void testExtractingAptFile3() {
+        extractAptComponentsFromFile("ubuntu_apt_package_list_3.txt");
+    }
+
     public void extractAptComponentsFromFile(String fileName){
         AptExtractor extractor = new AptExtractor()
         URL url = this.getClass().getResource("/$fileName")
