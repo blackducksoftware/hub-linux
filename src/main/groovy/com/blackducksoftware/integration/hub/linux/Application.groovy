@@ -10,6 +10,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.Bean
 
 import com.blackducksoftware.bdio.model.ExternalIdentifierBuilder
+import com.blackducksoftware.integration.hub.linux.creator.AptCreator
 
 @SpringBootApplication
 class Application {
@@ -31,6 +32,22 @@ class Application {
             println 'Your Hub configuration is valid and a successful connection to the Hub was established.'
         } catch (Exception e) {
             println("Your Hub configuration is not valid: ${e.message}")
+        }
+
+        try {
+            def directory = new File(".")
+            def creator = new AptCreator()
+
+            if(creator.isCommandAvailable()) {
+                def file = creator.createOutputFile(directory,"apt_extractor_input.txt")
+                if(file.exists()) {
+                    logger.info("File exists!!!!")
+                } else {
+                    logger.info("File does not exist!")
+                }
+            }
+        } catch(Exception e) {
+            println("Error creating output file ${e.message}")
         }
     }
 
