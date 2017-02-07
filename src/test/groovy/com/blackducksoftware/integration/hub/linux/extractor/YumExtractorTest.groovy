@@ -16,7 +16,6 @@ import org.junit.Test
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 
 class YumExtractorTest {
-
     @Test
     public void extractYumComponentsFile1(){
         extractYumComponentsFromFile("centos_yum_output_1.txt")
@@ -37,7 +36,7 @@ class YumExtractorTest {
         File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
 
         YumExtractor extractor = new YumExtractor()
-        List<BdioComponentDetails> componentDetails =  extractor.extract(file)
+        List<BdioComponentDetails> componentDetails =  extractor.extract("CentOS", file)
         println(componentDetails.size())
     }
 }
