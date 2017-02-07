@@ -19,6 +19,9 @@ class Application {
     @Autowired
     HubClient hubClient
 
+    @Autowired
+    HubLinuxManager hubLinuxManager
+
     static void main(final String[] args) {
         new SpringApplicationBuilder(Application.class).logStartupInfo(false).run(args)
     }
@@ -34,21 +37,7 @@ class Application {
             println("Your Hub configuration is not valid: ${e.message}")
         }
 
-        try {
-            def directory = new File(".")
-            def creator = new AptCreator()
-
-            if(creator.isCommandAvailable()) {
-                def file = creator.createOutputFile(directory,"apt_extractor_input.txt")
-                if(file.exists()) {
-                    logger.info("File exists!!!!")
-                } else {
-                    logger.info("File does not exist!")
-                }
-            }
-        } catch(Exception e) {
-            println("Error creating output file ${e.message}")
-        }
+        hubLinuxManager.performInspection()
     }
 
     @Bean

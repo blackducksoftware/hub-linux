@@ -6,12 +6,11 @@ import com.blackducksoftware.bdio.io.BdioWriter
 import com.blackducksoftware.bdio.io.LinkedDataContext
 import com.blackducksoftware.bdio.model.BillOfMaterials
 import com.blackducksoftware.bdio.model.CreationInfo
-import com.blackducksoftware.bdio.model.ExternalIdentifier
 import com.blackducksoftware.bdio.model.Project
 
 @Component
 class BdioFileWriter {
-    BdioWriter createBdioWriter(final OutputStream outputStream, final String projectName, final String projectVersion, String projectId) {
+    BdioWriter createBdioWriter(final OutputStream outputStream, final String projectName, final String projectVersion) {
         def linkedDataContext = new LinkedDataContext()
         def bdioWriter = new BdioWriter(linkedDataContext, outputStream)
 
@@ -23,20 +22,12 @@ class BdioFileWriter {
         bdioWriter.write(bom)
 
         def project = new Project()
-        project.setId(projectId)
+        project.setId("uuid:${UUID.randomUUID()}")
         project.setName(projectName)
         project.setVersion(projectVersion)
         bdioWriter.write(project)
 
         bdioWriter
-    }
-
-    ExternalIdentifier createLinuxIdentifier(String operatingSystemName) {
-        OSEnum os = OSEnum.determineOperatingSystem(operatingSystemName)
-        def externalIdentifier = new ExternalIdentifier()
-        externalIdentifier.setExternalSystemTypeId(os.forge);
-
-        externalIdentifier
     }
 
     void writeComponent(BdioWriter bdioWriter, BdioComponentDetails bdioComponentDetails) {

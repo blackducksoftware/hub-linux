@@ -3,6 +3,7 @@ package com.blackducksoftware.integration.hub.linux.extractor;
 import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.OSEnum
 
 class AptListTest {
 
@@ -25,7 +26,7 @@ class AptListTest {
         AptExtractor extractor = new AptExtractor()
         URL url = this.getClass().getResource("/$fileName")
         File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"))
-        List<BdioComponentDetails> componentDetails =extractor.extract(file);
+        List<BdioComponentDetails> componentDetails =extractor.extract(OSEnum.UBUNTU.name(),file);
         println(componentDetails.size())
     }
 }
