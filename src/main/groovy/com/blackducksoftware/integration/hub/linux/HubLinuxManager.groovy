@@ -1,5 +1,7 @@
 package com.blackducksoftware.integration.hub.linux
 
+import groovy.io.FileType
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -11,8 +13,6 @@ import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.extractor.Extractor
 import com.blackducksoftware.integration.hub.util.HostnameHelper
-
-import groovy.io.FileType
 
 @Component
 class HubLinuxManager {
@@ -50,7 +50,7 @@ class HubLinuxManager {
             }
         }
 
-        def outputFile = new File(workingDirectory, "${operatingSystem}_bdio.jsonld")
+        def outputFile = new File(workingDirectory, "${projectName}_bdio.jsonld")
         logger.info("Starting bdio creation using file: ${outputFile.canonicalPath}")
         new FileOutputStream(outputFile).withStream { outputStream ->
             def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, projectName, projectVersionName)
