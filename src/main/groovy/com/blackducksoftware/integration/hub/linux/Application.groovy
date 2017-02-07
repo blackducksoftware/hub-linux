@@ -26,7 +26,7 @@ class Application {
     void init() {
         println 'Hello Team!!!'
 
-                try {
+        try {
             hubClient.testHubConnection()
             println 'Your Hub configuration is valid and a successful connection to the Hub was established.'
         } catch (Exception e) {
