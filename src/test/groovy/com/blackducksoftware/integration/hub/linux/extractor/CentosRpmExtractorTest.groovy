@@ -2,7 +2,7 @@
  * Copyright (C) 2017 Black Duck Software Inc.
  * http://www.blackducksoftware.com/
  * All rights reserved.
- * 
+ *
  * This software is the confidential and proprietary information of
  * Black Duck Software ("Confidential Information"). You shall not
  * disclose such Confidential Information and shall use it only in
@@ -30,10 +30,24 @@ class CentosRpmExtractorTest {
     }
 
     @Test
-    void testExtractingCentosRpm() {
+    void testExtractingCentosRpmFile1() {
+        extractingCentosRpm("centos_rpm_output_1.txt");
+    }
+
+    @Test
+    void testExtractingCentosRpmFile2() {
+        extractingCentosRpm("centos_rpm_output_2.txt");
+    }
+
+    @Test
+    void testExtractingCentosRpmFile3() {
+        extractingCentosRpm("centos_rpm_output_3.txt");
+    }
+
+    void extractingCentosRpm(String fileName) {
         final CentosRpmExtractor extractor = new CentosRpmExtractor()
-        final URL url = this.getClass().getResource("/centos_rpm_output.txt")
-        final File file = new File(url.getFile())
+        final URL url = this.getClass().getResource("/$fileName")
+        final File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"))
 
         List<BdioComponentDetails> bdioEntries = extractor.extract(file)
 
@@ -42,5 +56,6 @@ class CentosRpmExtractorTest {
                 System.out.println(bdioEntry.getExternalIdentifier())
             }
         }
+        println(bdioEntries.size())
     }
 }
