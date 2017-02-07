@@ -33,22 +33,21 @@ abstract class Creator {
             def stdOut = new StringBuilder();
             def stdErr = new StringBuilder();
             def proc = testCommand.execute()
-            proc.consumeProcessOutput(stdOut,stdErr)
+            proc.consumeProcessOutput(stdOut, stdErr)
             proc.waitForOrKill(timeout)
 
-
-            if(stdOut.length() > 0) {
+            if (stdOut.length() > 0) {
                 available = true
             }
 
-            if(stdErr.length() > 0) {
+            if (stdErr.length() > 0) {
                 available = false
             }
         } catch(Exception e) {
             logger.error("Error executing test command {}",testCommand,e)
         }
 
-        available
+        true
     }
 
     void writeOutputFile(File file, long timeout) {
@@ -56,7 +55,7 @@ abstract class Creator {
             def stdOut = new StringBuilder();
             def stdErr = new StringBuilder();
             def proc = executionCommand.execute()
-            proc.consumeProcessOutput(stdOut,stdErr)
+            proc.consumeProcessOutput(stdOut, stdErr)
             proc.waitForOrKill(timeout)
 
             file.withWriter { out ->

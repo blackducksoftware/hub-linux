@@ -26,6 +26,9 @@ class HubLinuxManager {
     long commandTimeout
 
     @Autowired
+    OperatingSystemFinder operatingSystemFinder
+
+    @Autowired
     HubClient hubClient
 
     @Autowired
@@ -38,18 +41,24 @@ class HubLinuxManager {
     List<Extractor> extractors
 
     void performInspection() {
-        String operatingSystem = System.getProperty('os.name')
-        String projectName = operatingSystem + "-" + HostnameHelper.getMyHostname()
+        String operatingSystemName = operatingSystemFinder.determineOperatingSystem()
+        OSEnum os = OSEnum.determineOperatingSystem(operatingSystemName)
+        String projectName = os.forge + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
 
         def workingDirectory = new File(workingDirectoryPath)
         workingDirectory.mkdirs()
 
         creators.each {
+            println it.filenameSuffix
             if (it.isCommandAvailable(commandTimeout)) {
-                String filename = "${operatingSystem}${it.filenameSuffix}"
+                println 'trying to create file'
+                String filename = "${os.forge}${it.filenameSuffix}"
                 File outputFile = new File(workingDirectory, filename)
                 it.writeOutputFile(outputFile, commandTimeout)
+                println 'created file'
+            } else {
+                println 'command not available'
             }
         }
 
@@ -58,7 +67,7 @@ class HubLinuxManager {
             println file.name
             extractors.each { extractor ->
                 if (extractor.shouldAttemptExtract(file)) {
-                    def extractedComponents = extractor.extract(operatingSystem, file)
+                    def extractedComponents = extractor.extract(os.forge, file)
                     bdioComponentDetails.addAll(extractedComponents)
                 }
             }
