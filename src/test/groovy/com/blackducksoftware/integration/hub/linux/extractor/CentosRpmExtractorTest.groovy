@@ -36,11 +36,20 @@ class CentosRpmExtractorTest {
         final File file = new File(url.getFile())
 
         List<BdioComponentDetails> bdioEntries = extractor.extract(file)
-
+        assertEquals(635, bdioEntries.size())
+        boolean foundTargetEntry = false
+        int validEntryCount = 0
         for (final BdioComponentDetails bdioEntry : bdioEntries) {
             if (bdioEntry != null) {
+                validEntryCount++
                 System.out.println(bdioEntry.getExternalIdentifier())
+                if ("perl-Data-Dumper/2.145-3.el7/x86_64".contentEquals(bdioEntry.getExternalIdentifier().getExternalId())) {
+                    foundTargetEntry = true
+                    assertEquals("perl-Data-Dumper", bdioEntry.getName())
+                    assertEquals("2.145-3.el7", bdioEntry.getVersion())
+                }
             }
         }
+        assertTrue(foundTargetEntry)
     }
 }
