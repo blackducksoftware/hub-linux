@@ -18,8 +18,18 @@ import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 class YumExtractorTest {
 
     @Test
-    public void extractYumComponents(){
+    public void extractYumComponentsFile1(){
         URL url = this.getClass().getResource("/centos_yum_output_1.txt")
+        File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
+
+        YumExtractor extractor = new YumExtractor()
+        List<BdioComponentDetails> componentDetails =  extractor.extract(file)
+        println(componentDetails.size())
+    }
+
+    @Test
+    public void extractYumComponentsFile2(){
+        URL url = this.getClass().getResource("/centos_yum_output_2.txt")
         File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
 
         YumExtractor extractor = new YumExtractor()
