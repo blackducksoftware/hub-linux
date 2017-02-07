@@ -45,7 +45,6 @@ class AptExtractor extends Extractor {
         components
     }
 
-    @Override
     BdioComponentDetails extract(String operatingSystem, String inputLine) {
         def bdioComponentDetails = null
 

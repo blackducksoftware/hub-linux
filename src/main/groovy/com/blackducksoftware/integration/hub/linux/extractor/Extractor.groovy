@@ -6,7 +6,6 @@ import com.blackducksoftware.integration.hub.linux.OSEnum
 
 abstract class Extractor {
     abstract List<BdioComponentDetails> extract(String operatingSystem, File inputFile)
-    abstract BdioComponentDetails extract(String operatingSystem, String inputLine)
     abstract boolean shouldAttemptExtract(File file)
 
     BdioComponentDetails createBdioComponentDetails(String operatingSystem, String name, String version, String externalId) {

@@ -13,53 +13,46 @@ package com.blackducksoftware.integration.hub.linux.extractor
 
 import org.springframework.stereotype.Component
 
-import com.blackducksoftware.bdio.model.ExternalIdentifier
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 
 @Component
-class YumExtractor {
+class YumExtractor extends Extractor {
+    boolean shouldAttemptExtract(File file) {
+        file.name.endsWith('_yum.txt')
+    }
 
-
-    List<BdioComponentDetails> extract(File yumOutput) {
+    List<BdioComponentDetails> extract(String operatingSystem, File yumOutput) {
         def components = []
-        boolean startOfComponents = false;
+        boolean startOfComponents = false
 
         def componentColumns = []
-
         yumOutput.eachLine { line ->
-            if(line != null){
-                if('Installed Packages' == line){
-                    startOfComponents = true;
-                } else if('Available Packages' == line){
+            if (line != null) {
+                if ('Installed Packages' == line) {
+                    startOfComponents = true
+                } else if ('Available Packages' == line) {
                     return components
-                } else if(startOfComponents){
-                    componentColumns.addAll(line.trim().tokenize(" "));
-                    if(componentColumns.size() == 3){
+                } else if (startOfComponents) {
+                    componentColumns.addAll(line.tokenize(' '))
+                    if (componentColumns.size() == 3) {
+                        String nameArch = componentColumns.get(0)
+                        String version = componentColumns.get(1)
+                        String name =nameArch.substring(0, nameArch.lastIndexOf("."))
+                        String architecture = nameArch.substring(nameArch.lastIndexOf(".") + 1)
 
-                        String nameArch = componentColumns.get(0);
-                        String version = componentColumns.get(1);
-                        String name =nameArch.substring(0, nameArch.lastIndexOf("."));
-                        String architecture = nameArch.substring(nameArch.lastIndexOf(".") + 1);
+                        String externalId = "$name/$version/$architecture"
+                        def bdioComponentDetails = createBdioComponentDetails(operatingSystem, name, version, externalId)
 
-                        def externalIdentifier = createExternalIdentifier(name, version, architecture)
-                        components.add(new BdioComponentDetails(name: name, version: version, externalIdentifier: externalIdentifier))
+                        components.add(bdioComponentDetails)
                         componentColumns = []
-                    } else  if(componentColumns.size() > 3){
+                    } else  if (componentColumns.size() > 3) {
                         //FIXME
-                        throw new RuntimeException ("Parsing multi-line components has failed.");
+                        throw new RuntimeException ("Parsing multi-line components has failed.")
                     }
                 }
             }
         }
+
         components
-    }
-
-
-    ExternalIdentifier createExternalIdentifier(String name, String version, String architecture) {
-        def externalIdentifier = new ExternalIdentifier();
-        externalIdentifier.setExternalSystemTypeId('centos');
-        externalIdentifier.setExternalId("$name/$version/$architecture");
-
-        externalIdentifier
     }
 }
