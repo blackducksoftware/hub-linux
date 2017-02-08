@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class OperatingSystemFinder {
     private final Logger logger = LoggerFactory.getLogger(OperatingSystemFinder.class)
-    @Value('${linux.distro}')
+
     String linuxDistro
 
     @Value('${command.timeout}')
