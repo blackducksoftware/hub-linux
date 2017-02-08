@@ -8,11 +8,12 @@ import com.blackducksoftware.integration.hub.linux.OSEnum
 abstract class Extractor {
     FileSuffixEnum fileSuffixEnum
 
-    Extractor(FileSuffixEnum fileSuffixEnum) {
+    abstract void init()
+    abstract List<BdioComponentDetails> extract(String operatingSystem, File inputFile)
+
+    void initValues(FileSuffixEnum fileSuffixEnum) {
         this.fileSuffixEnum = fileSuffixEnum
     }
-
-    abstract List<BdioComponentDetails> extract(String operatingSystem, File inputFile)
 
     boolean shouldAttemptExtract(File file) {
         fileSuffixEnum.fileMatches(file)

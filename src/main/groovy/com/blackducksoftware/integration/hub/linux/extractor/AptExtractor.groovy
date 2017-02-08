@@ -11,6 +11,8 @@
  */
 package com.blackducksoftware.integration.hub.linux.extractor
 
+import javax.annotation.PostConstruct
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
@@ -22,8 +24,9 @@ import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 class AptExtractor extends Extractor {
     private final Logger logger = LoggerFactory.getLogger(AptExtractor.class)
 
-    AptExtractor() {
-        super(FileSuffixEnum.APT)
+    @PostConstruct
+    void init() {
+        initValues(FileSuffixEnum.APT)
     }
 
     @Override

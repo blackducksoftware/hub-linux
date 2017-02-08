@@ -11,6 +11,8 @@
  */
 package com.blackducksoftware.integration.hub.linux.extractor
 
+import javax.annotation.PostConstruct
+
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
@@ -18,8 +20,9 @@ import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
 @Component
 class YumExtractor extends Extractor {
-    YumExtractor() {
-        super(FileSuffixEnum.YUM)
+    @PostConstruct
+    void init() {
+        initValues(FileSuffixEnum.YUM)
     }
 
     List<BdioComponentDetails> extract(String operatingSystem, File yumOutput) {

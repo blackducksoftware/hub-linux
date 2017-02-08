@@ -11,10 +11,13 @@
  */
 package com.blackducksoftware.integration.hub.linux.creator
 
+import javax.annotation.PostConstruct
+
 import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
 class YumCreator extends Creator {
-    YumCreator() {
-        super(FileSuffixEnum.YUM, 'yum --version', 'yum list installed')
+    @PostConstruct
+    void init() {
+        initializeValues(FileSuffixEnum.YUM, 'yum --version', 'yum list installed')
     }
 }

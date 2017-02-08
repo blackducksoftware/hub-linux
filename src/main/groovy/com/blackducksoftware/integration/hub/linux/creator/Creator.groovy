@@ -23,7 +23,9 @@ abstract class Creator {
     String testCommand
     String executionCommand
 
-    Creator(FileSuffixEnum fileSuffixEnum, String testCommand, String executionCommand) {
+    abstract void init()
+
+    void initializeValues(FileSuffixEnum fileSuffixEnum, String testCommand, String executionCommand) {
         this.fileSuffixEnum = fileSuffixEnum
         this.testCommand = testCommand
         this.executionCommand = executionCommand

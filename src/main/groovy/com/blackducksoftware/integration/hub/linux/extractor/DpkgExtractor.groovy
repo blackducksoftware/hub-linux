@@ -11,12 +11,15 @@
  */
 package com.blackducksoftware.integration.hub.linux.extractor
 
+import javax.annotation.PostConstruct
+
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
 class DpkgExtractor extends Extractor {
-    DpkgExtractor() {
-        super(FileSuffixEnum.DPKG)
+    @PostConstruct
+    void init() {
+        initValues(FileSuffixEnum.DPKG)
     }
 
     List<BdioComponentDetails> extract(String operatingSystem, File yumOutput) {

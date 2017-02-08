@@ -11,6 +11,8 @@
  */
 package com.blackducksoftware.integration.hub.linux.extractor
 
+import javax.annotation.PostConstruct
+
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
@@ -18,8 +20,9 @@ import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
 @Component
 class RpmExtractor extends Extractor {
-    RpmExtractor() {
-        super(FileSuffixEnum.RPM)
+    @PostConstruct
+    void init() {
+        initValues(FileSuffixEnum.RPM)
     }
 
     @Override

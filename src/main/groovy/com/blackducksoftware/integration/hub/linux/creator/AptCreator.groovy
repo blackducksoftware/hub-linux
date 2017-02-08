@@ -11,13 +11,16 @@
  */
 package com.blackducksoftware.integration.hub.linux.creator
 
+import javax.annotation.PostConstruct
+
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
 @Component
 class AptCreator extends Creator {
-    AptCreator() {
-        super(FileSuffixEnum.APT, 'apt --version', 'apt --installed list')
+    @PostConstruct
+    void init() {
+        initializeValues(FileSuffixEnum.APT, 'apt --version', 'apt --installed list')
     }
 }

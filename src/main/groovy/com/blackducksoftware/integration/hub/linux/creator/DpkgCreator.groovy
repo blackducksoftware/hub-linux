@@ -11,10 +11,13 @@
  */
 package com.blackducksoftware.integration.hub.linux.creator
 
+import javax.annotation.PostConstruct
+
 import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
 class DpkgCreator extends Creator {
-    DpkgCreator() {
-        super(FileSuffixEnum.DPKG, 'dpkg --version', 'dpkg -l')
+    @PostConstruct
+    void init() {
+        initializeValues(FileSuffixEnum.DPKG, 'dpkg --version', 'dpkg -l')
     }
 }
