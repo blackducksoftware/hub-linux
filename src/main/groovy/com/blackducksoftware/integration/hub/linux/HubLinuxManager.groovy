@@ -13,6 +13,8 @@ import com.blackducksoftware.integration.hub.linux.creator.Creator
 import com.blackducksoftware.integration.hub.linux.extractor.Extractor
 import com.blackducksoftware.integration.hub.util.HostnameHelper
 
+import groovy.io.FileType
+
 @Component
 class HubLinuxManager {
     private final Logger logger = LoggerFactory.getLogger(HubLinuxManager.class)
@@ -45,6 +47,10 @@ class HubLinuxManager {
         OperatingSystemEnum operatingSystemEnum = operatingSystemFinder.determineOperatingSystem()
         String projectName = operatingSystemEnum.forge + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
+
+        logger.info("Operating System: {}",operatingSystemEnum.forge)
+        logger.info("Project Name:     {}",projectName)
+        logger.info("Project Version:  {}",projectVersionName)
 
         def workingDirectory = new File(workingDirectoryPath)
         workingDirectory.mkdirs()
