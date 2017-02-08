@@ -2,7 +2,7 @@
  * Copyright (C) 2017 Black Duck Software Inc.
  * http://www.blackducksoftware.com/
  * All rights reserved.
- * 
+ *
  * This software is the confidential and proprietary information of
  * Black Duck Software ("Confidential Information"). You shall not
  * disclose such Confidential Information and shall use it only in
@@ -11,36 +11,29 @@
  */
 package com.blackducksoftware.integration.hub.linux.extractor
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
-import com.blackducksoftware.bdio.model.ExternalIdentifier
-import com.blackducksoftware.bdio.model.ExternalIdentifierBuilder
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
 @Component
-class CentosRpmExtractor {
-    private final Logger logger = LoggerFactory.getLogger(CentosRpmExtractor.class)
+class RpmExtractor extends Extractor {
+    RpmExtractor() {
+        super(FileSuffixEnum.RPM)
+    }
 
-    @Autowired
-    ExternalIdentifierBuilder externalIdentifierBuilder
-
-    List<BdioComponentDetails> extract(File inputFile) {
+    @Override
+    List<BdioComponentDetails> extract(String operatingSystem, File inputFile) {
         def components = []
         inputFile.eachLine { line ->
-            components.add(extract(line))
+            components.add(extract(operatingSystem, line))
         }
 
         components
     }
 
-    BdioComponentDetails extract(String inputLine) {
-        def details = null
-
+    BdioComponentDetails extract(String operatingSystem, String inputLine) {
         if (valid(inputLine)) {
-
             def lastDotIndex = inputLine.lastIndexOf('.')
             def arch = inputLine.substring(lastDotIndex + 1)
             def lastDashIndex = inputLine.lastIndexOf('-')
@@ -50,28 +43,14 @@ class CentosRpmExtractor {
             def versionRelease = inputLine.substring(secondToLastDashIndex + 1, lastDotIndex)
             def artifact = inputLine.substring(0, secondToLastDashIndex)
 
-            def externalIdentifier = createExternalIdentifier(artifact, versionRelease, arch)
-            details = new BdioComponentDetails(name: artifact, version: versionRelease, externalIdentifier: externalIdentifier)
+            String externalId = "${artifact}/${versionRelease}/${arch}"
+            return createBdioComponentDetails(operatingSystem, artifact, versionRelease, externalId)
         }
 
-        details
-    }
-
-
-
-    ExternalIdentifier createExternalIdentifier(String packageName, String version, String arch) {
-        def externalIdentifier = new ExternalIdentifier();
-        externalIdentifier.setExternalSystemTypeId('centos');
-        externalIdentifier.setExternalId("${packageName}/${version}/${arch}");
-
-        externalIdentifier
+        null
     }
 
     boolean valid(String inputLine) {
-        if (inputLine.matches(".+-.+-.+\\..*")) {
-            true
-        } else {
-            false
-        }
+        inputLine.matches(".+-.+-.+\\..*")
     }
 }

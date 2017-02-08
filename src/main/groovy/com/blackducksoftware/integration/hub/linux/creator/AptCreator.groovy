@@ -13,13 +13,11 @@ package com.blackducksoftware.integration.hub.linux.creator
 
 import org.springframework.stereotype.Component
 
+import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+
 @Component
 class AptCreator extends Creator {
     AptCreator() {
-        super('apt --version', 'apt --installed list')
-    }
-
-    String getFilenameSuffix() {
-        '_apt.txt'
+        super(FileSuffixEnum.APT, 'apt --version', 'apt --installed list')
     }
 }

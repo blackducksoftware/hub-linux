@@ -11,12 +11,10 @@
  */
 package com.blackducksoftware.integration.hub.linux.creator
 
+import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+
 class DpkgCreator extends Creator {
     DpkgCreator() {
-        super('dpkg --version', 'dpkg -l')
-    }
-
-    String getFilenameSuffix() {
-        '_dpkg.txt'
+        super(FileSuffixEnum.DPKG, 'dpkg --version', 'dpkg -l')
     }
 }

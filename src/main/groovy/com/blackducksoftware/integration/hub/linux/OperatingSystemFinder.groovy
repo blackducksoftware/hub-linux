@@ -5,10 +5,17 @@ import org.springframework.stereotype.Component
 
 @Component
 class OperatingSystemFinder {
+    @Value('${linux.distro}')
+    String linuxDistro
+
     @Value('${command.timeout}')
     long commandTimeout
 
     String determineOperatingSystem() {
+        if (linuxDistro) {
+            return linuxDistro
+        }
+
         def proc = 'lsb_release -a'.execute()
         proc.waitForOrKill(commandTimeout)
 

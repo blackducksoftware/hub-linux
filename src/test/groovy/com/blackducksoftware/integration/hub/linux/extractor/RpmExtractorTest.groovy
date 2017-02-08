@@ -9,7 +9,7 @@
  * accordance with the terms of the license agreement you entered into
  * with Black Duck Software.
  */
-package com.blackducksoftware.integration.hub.linux.extractor;
+package com.blackducksoftware.integration.hub.linux.extractor
 
 import static org.junit.Assert.*
 
@@ -19,8 +19,7 @@ import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 
-class CentosRpmExtractorTest {
-
+class RpmExtractorTest {
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
     }
@@ -30,26 +29,26 @@ class CentosRpmExtractorTest {
     }
 
     @Test
-    void testExtractingCentosRpmFile1() {
-        extractingCentosRpm("centos_rpm_output_1.txt",635,"perl-Data-Dumper","2.145-3.el7","x86_64");
+    void testExtractingRpmFile1() {
+        extractingRpm("centos_rpm_output_1.txt",635,"perl-Data-Dumper","2.145-3.el7","x86_64")
     }
 
     @Test
-    void testExtractingCentosRpmFile2() {
-        extractingCentosRpm("centos_rpm_output_2.txt",1262,"sysvinit-tools","2.87-6.dsf.el6","x86_64");
+    void testExtractingRpmFile2() {
+        extractingRpm("centos_rpm_output_2.txt",1262,"sysvinit-tools","2.87-6.dsf.el6","x86_64")
     }
 
     @Test
-    void testExtractingCentosRpmFile3() {
-        extractingCentosRpm("centos_rpm_output_3.txt",584,"perl-Data-Dumper","2.145-3.el7","x86_64");
+    void testExtractingRpmFile3() {
+        extractingRpm("centos_rpm_output_3.txt",584,"perl-Data-Dumper","2.145-3.el7","x86_64")
     }
 
-    void extractingCentosRpm(String fileName, int size, String name, String version, String arch) {
-        final CentosRpmExtractor extractor = new CentosRpmExtractor()
+    void extractingRpm(String fileName, int size, String name, String version, String arch) {
+        final RpmExtractor extractor = new RpmExtractor()
         final URL url = this.getClass().getResource("/$fileName")
         final File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"))
 
-        List<BdioComponentDetails> bdioEntries = extractor.extract(file)
+        List<BdioComponentDetails> bdioEntries = extractor.extract('centos', file)
         assertEquals(size, bdioEntries.size())
         boolean foundTargetEntry = false
         int validEntryCount = 0
@@ -57,7 +56,7 @@ class CentosRpmExtractorTest {
             if (bdioEntry != null) {
                 validEntryCount++
                 System.out.println(bdioEntry.getExternalIdentifier())
-                def match = String.join("/",name,version,arch);
+                def match = String.join("/",name,version,arch)
                 if (match.contentEquals(bdioEntry.getExternalIdentifier().getExternalId())) {
                     foundTargetEntry = true
                     assertEquals(name, bdioEntry.getName())

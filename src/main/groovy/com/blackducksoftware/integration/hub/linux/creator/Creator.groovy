@@ -14,46 +14,47 @@ package com.blackducksoftware.integration.hub.linux.creator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+
 abstract class Creator {
     private final Logger logger = LoggerFactory.getLogger(getClass())
 
+    FileSuffixEnum fileSuffixEnum
     String testCommand
     String executionCommand
 
-    Creator(String testCommand, String executionCommand) {
+    Creator(FileSuffixEnum fileSuffixEnum, String testCommand, String executionCommand) {
+        this.fileSuffixEnum = fileSuffixEnum
         this.testCommand = testCommand
         this.executionCommand = executionCommand
     }
 
-    abstract String getFilenameSuffix()
+    String filename(String forge) {
+        "${forge}${fileSuffixEnum.suffix}"
+    }
 
     boolean isCommandAvailable(long timeout) {
-        def available = false;
         try {
             def proc = testCommand.execute()
             proc.waitForOrKill(timeout)
 
-            if(proc.exitValue() == 0){
-                available = true
-            }
+            return proc.exitValue() == 0
         } catch(Exception e) {
             logger.error("Error executing test command {}",testCommand,e)
         }
 
-        available
+        false
     }
 
     void writeOutputFile(File file, long timeout) {
         try {
-            def stdOut = new StringBuilder();
-            def stdErr = new StringBuilder();
-            def proc = executionCommand.execute()
-            proc.consumeProcessOutput(stdOut,stdErr)
-            proc.waitForOrKill(timeout)
+            def standardOut = new StringBuilder()
+            def standardError = new StringBuilder()
+            def process = executionCommand.execute()
+            process.consumeProcessOutput(standardOut, standardError)
+            process.waitForOrKill(timeout)
 
-            file.withWriter { out ->
-                out.println stdOut.toString()
-            }
+            file << standardOut
         } catch(Exception e) {
             logger.error("Error executing command {}",executionCommand,e)
         }

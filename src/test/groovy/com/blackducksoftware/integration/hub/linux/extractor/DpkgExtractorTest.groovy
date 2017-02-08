@@ -29,7 +29,7 @@ class DpkgExtractorTest {
 
     public void extractDpkgComponentsFromFile(String fileName){
         URL url = this.getClass().getResource("/$fileName")
-        File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"));
+        File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"))
 
         DpkgExtractor extractor = new DpkgExtractor()
         List<BdioComponentDetails> componentDetails =  extractor.extract("CentOS", file)

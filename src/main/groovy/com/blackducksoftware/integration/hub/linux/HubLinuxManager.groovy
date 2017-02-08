@@ -25,9 +25,6 @@ class HubLinuxManager {
     @Value('${command.timeout}')
     long commandTimeout
 
-    @Value('${linux.distro}')
-    String linuxDistro
-
     @Autowired
     OperatingSystemFinder operatingSystemFinder
 
@@ -44,8 +41,7 @@ class HubLinuxManager {
     List<Extractor> extractors
 
     void performInspection() {
-        //String operatingSystemName = operatingSystemFinder.determineOperatingSystem()
-        String operatingSystemName = linuxDistro
+        String operatingSystemName = operatingSystemFinder.determineOperatingSystem()
         OSEnum os = OSEnum.determineOperatingSystem(operatingSystemName)
         String projectName = os.forge + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
@@ -54,28 +50,31 @@ class HubLinuxManager {
         workingDirectory.mkdirs()
 
         creators.each {
-            println it.filenameSuffix
-            if (it.isCommandAvailable(commandTimeout)) {
-                println 'trying to create file'
-                String filename = "${os.forge}${it.filenameSuffix}"
-                File outputFile = new File(workingDirectory, filename)
-                it.writeOutputFile(outputFile, commandTimeout)
-                println 'created file'
-            } else {
-                println 'command not available'
+            logger.info "Starting file creation with ${it.getClass().name}"
+            if (!it.isCommandAvailable(commandTimeout)) {
+                logger.info("Can't create with ${it.getClass().name} - command is not available.")
+                return
             }
+
+            String filename = it.filename(os.forge)
+            File outputFile = new File(workingDirectory, filename)
+            it.writeOutputFile(outputFile, commandTimeout)
+            logger.info('Created file ${outputFile.canonicalPath}')
         }
 
         def bdioComponentDetails = []
         workingDirectory.eachFile(FileType.FILES) { file ->
-            println file.name
+            logger.info("Processing file ${file.name}")
             extractors.each { extractor ->
                 if (extractor.shouldAttemptExtract(file)) {
+                    logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
                     def extractedComponents = extractor.extract(os.forge, file)
                     bdioComponentDetails.addAll(extractedComponents)
                 }
             }
         }
+
+        logger.info "Found ${bdioComponentDetails.size()} components."
 
         def outputFile = new File(workingDirectory, "${projectName}_bdio.jsonld")
         logger.info("Starting bdio creation using file: ${outputFile.canonicalPath}")

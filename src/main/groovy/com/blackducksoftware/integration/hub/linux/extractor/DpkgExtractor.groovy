@@ -12,10 +12,11 @@
 package com.blackducksoftware.integration.hub.linux.extractor
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
 class DpkgExtractor extends Extractor {
-    boolean shouldAttemptExtract(File file) {
-        file.name.endsWith('_dpkg.txt')
+    DpkgExtractor() {
+        super(FileSuffixEnum.DPKG)
     }
 
     List<BdioComponentDetails> extract(String operatingSystem, File yumOutput) {
@@ -28,7 +29,7 @@ class DpkgExtractor extends Extractor {
                     startOfComponents = true
                 } else if (startOfComponents){
                     String componentInfo = line.substring(3)
-                    def(name,version,architecture,description) = componentInfo.tokenize(" ");
+                    def(name,version,architecture,description) = componentInfo.tokenize(" ")
 
                     String externalId = "$name/$version/$architecture"
                     def bdioComponentDetails = createBdioComponentDetails(operatingSystem, name, version, externalId)

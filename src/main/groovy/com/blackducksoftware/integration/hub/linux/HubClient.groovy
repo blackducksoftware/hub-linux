@@ -70,16 +70,16 @@ class HubClient {
 
     private HubServerConfigBuilder createBuilder() {
         HubServerConfigBuilder hubServerConfigBuilder = new HubServerConfigBuilder()
-        hubServerConfigBuilder.setHubUrl(hubUrl)
-        hubServerConfigBuilder.setUsername(hubUsername)
-        hubServerConfigBuilder.setPassword(hubPassword)
+        hubServerConfigBuilder.hubUrl = hubUrl
+        hubServerConfigBuilder.username = hubUsername
+        hubServerConfigBuilder.password = hubPassword
 
-        hubServerConfigBuilder.setTimeout(hubTimeout)
-        hubServerConfigBuilder.setProxyHost(hubProxyHost)
-        hubServerConfigBuilder.setProxyPort(hubProxyPort)
-        hubServerConfigBuilder.setIgnoredProxyHosts(hubProxyIgnoredProxyHosts)
-        hubServerConfigBuilder.setProxyUsername(hubProxyUsername)
-        hubServerConfigBuilder.setProxyPassword(hubProxyPassword)
+        hubServerConfigBuilder.timeout = hubTimeout
+        hubServerConfigBuilder.proxyHost = hubProxyHost
+        hubServerConfigBuilder.proxyPort = hubProxyPort
+        hubServerConfigBuilder.ignoredProxyHosts = hubProxyIgnoredProxyHosts
+        hubServerConfigBuilder.proxyUsername = hubProxyUsername
+        hubServerConfigBuilder.proxyPassword = hubProxyPassword
 
         hubServerConfigBuilder
     }

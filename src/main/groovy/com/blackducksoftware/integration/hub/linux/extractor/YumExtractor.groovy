@@ -14,11 +14,12 @@ package com.blackducksoftware.integration.hub.linux.extractor
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
 @Component
 class YumExtractor extends Extractor {
-    boolean shouldAttemptExtract(File file) {
-        file.name.endsWith('_yum.txt')
+    YumExtractor() {
+        super(FileSuffixEnum.YUM)
     }
 
     List<BdioComponentDetails> extract(String operatingSystem, File yumOutput) {

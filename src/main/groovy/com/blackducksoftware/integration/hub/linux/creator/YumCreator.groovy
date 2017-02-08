@@ -11,12 +11,10 @@
  */
 package com.blackducksoftware.integration.hub.linux.creator
 
+import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+
 class YumCreator extends Creator {
     YumCreator() {
-        super('yum --version', 'yum list installed')
-    }
-
-    String getFilenameSuffix() {
-        '_yum.txt'
+        super(FileSuffixEnum.YUM, 'yum --version', 'yum list installed')
     }
 }

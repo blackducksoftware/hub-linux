@@ -15,16 +15,16 @@ class BdioFileWriter {
         def bdioWriter = new BdioWriter(linkedDataContext, outputStream)
 
         def bom = new BillOfMaterials()
-        bom.setId("uuid:${UUID.randomUUID()}")
-        bom.setName("${projectName} Black Duck I/O Export")
-        bom.setSpecVersion(linkedDataContext.getSpecVersion())
-        bom.setCreationInfo(CreationInfo.currentTool())
+        bom.id = "uuid:${UUID.randomUUID()}"
+        bom.name = "${projectName} Black Duck I/O Export"
+        bom.specVersion = linkedDataContext.getSpecVersion()
+        bom.creationInfo = CreationInfo.currentTool()
         bdioWriter.write(bom)
 
         def project = new Project()
-        project.setId("uuid:${UUID.randomUUID()}")
-        project.setName(projectName)
-        project.setVersion(projectVersion)
+        project.id = "uuid:${UUID.randomUUID()}"
+        project.name = projectName
+        project.version = projectVersion
         bdioWriter.write(project)
 
         bdioWriter
