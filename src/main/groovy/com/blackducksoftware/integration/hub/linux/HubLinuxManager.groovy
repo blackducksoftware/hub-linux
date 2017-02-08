@@ -60,6 +60,9 @@ class HubLinuxManager {
             } else{
                 String filename = it.filename(operatingSystemEnum.forge)
                 File outputFile = new File(workingDirectory, filename)
+                if(outputFile.exists()){
+                    outputFile.delete()
+                }
                 it.writeOutputFile(outputFile, commandTimeout)
                 logger.info("Created file ${outputFile.canonicalPath}")
             }

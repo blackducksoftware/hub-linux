@@ -31,17 +31,17 @@ class RpmExtractorTest {
 
     @Test
     void testExtractingRpmFile1() {
-        extractingRpm("centos_rpm_output_1.txt",635,"perl-Data-Dumper","2.145-3.el7","x86_64")
+        extractingRpm("centos_rpm_output_1.txt",631,"perl-Data-Dumper","2.145-3.el7","x86_64")
     }
 
     @Test
     void testExtractingRpmFile2() {
-        extractingRpm("centos_rpm_output_2.txt",1262,"sysvinit-tools","2.87-6.dsf.el6","x86_64")
+        extractingRpm("centos_rpm_output_2.txt",1255,"sysvinit-tools","2.87-6.dsf.el6","x86_64")
     }
 
     @Test
     void testExtractingRpmFile3() {
-        extractingRpm("centos_rpm_output_3.txt",584,"perl-Data-Dumper","2.145-3.el7","x86_64")
+        extractingRpm("centos_rpm_output_3.txt",580,"perl-Data-Dumper","2.145-3.el7","x86_64")
     }
 
     void extractingRpm(String fileName, int size, String name, String version, String arch) {
