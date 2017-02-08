@@ -50,7 +50,7 @@ class AptExtractor extends Extractor {
             if (index > 0) {
                 def component = packageName.substring(0, index)
                 String externalId = "${component}/${version}"
-                return createBdioComponentDetails(operatingSystem, packageName, version, externalId)
+                return createBdioComponentDetails(operatingSystem, component, version, externalId)
             }
         }
 

@@ -11,28 +11,49 @@
  */
 package com.blackducksoftware.integration.hub.linux.extractor
 
+import static org.junit.Assert.*
+
 import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.OSEnum
 
 class DpkgExtractorTest {
     @Test
     public void extractDpkgComponentsFile1(){
-        extractDpkgComponentsFromFile("ubuntu_dpkg_output_1.txt")
+        extractDpkgComponentsFromFile('ubuntu_dpkg_output_1.txt',745,'linux-headers-3.13.0-107-generic','3.13.0-107.154','amd64')
     }
 
     @Test
     public void extractDpkgComponentsFile2(){
-        extractDpkgComponentsFromFile("ubuntu_dpkg_output_2.txt")
+        extractDpkgComponentsFromFile('ubuntu_dpkg_output_2.txt',98,'sed','4.2.2-7','amd64')
     }
 
 
-    public void extractDpkgComponentsFromFile(String fileName){
+    public void extractDpkgComponentsFromFile(String fileName, int size, String name, String version, String arch){
         URL url = this.getClass().getResource("/$fileName")
-        File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"))
+        File file = new File(URLDecoder.decode(url.getFile(), 'UTF-8'))
 
         DpkgExtractor extractor = new DpkgExtractor()
-        List<BdioComponentDetails> componentDetails =  extractor.extract("CentOS", file)
-        println(componentDetails.size())
+        List<BdioComponentDetails> bdioEntries =  extractor.extract(OSEnum.UBUNTU.name(), file)
+
+        assertEquals(size, bdioEntries.size())
+        boolean foundTargetEntry = false
+        int validEntryCount = 0
+        for (final BdioComponentDetails bdioEntry : bdioEntries) {
+            if (bdioEntry != null) {
+                validEntryCount++
+                // println(bdioEntry.getExternalIdentifier())
+                def match = String.join("/",name,version,arch)
+                if (match.contentEquals(bdioEntry.getExternalIdentifier().getExternalId())) {
+                    foundTargetEntry = true
+                    assertEquals(name, bdioEntry.getName())
+                    assertEquals(version, bdioEntry.getVersion())
+                }
+            }
+        }
+
+        assertTrue(foundTargetEntry)
+        println(bdioEntries.size())
     }
 }
