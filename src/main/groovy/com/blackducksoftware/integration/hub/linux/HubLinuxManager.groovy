@@ -74,16 +74,13 @@ class HubLinuxManager {
         def allExtractionResults = []
         workingDirectory.eachFile() { file ->
             logger.info("Processing file ${file.name}")
-            if ("centos_rpm.txt".contentEquals(file.name)) {
-                // TODO TEMP
-                extractors.each { extractor ->
-                    if (extractor.shouldAttemptExtract(file)) {
-                        logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
-                        /////////////// TODO un hard code OS
-                        def extractedComponents = extractor.extract(OperatingSystemEnum.CENTOS, file)
-                        //                    def extractedComponents = extractor.extract(operatingSystemEnum.forge, file)
-                        allExtractionResults.addAll(extractedComponents)
-                    }
+            extractors.each { extractor ->
+                if (extractor.shouldAttemptExtract(file)) {
+                    logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
+                    /////////////// TODO un hard code OS
+                    def extractedComponents = extractor.extract(OperatingSystemEnum.CENTOS, file)
+                    //                    def extractedComponents = extractor.extract(operatingSystemEnum.forge, file)
+                    allExtractionResults.addAll(extractedComponents)
                 }
             }
         }

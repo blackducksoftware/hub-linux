@@ -13,7 +13,7 @@ import com.blackducksoftware.bdio.model.Project
 @Component
 class BdioFileWriter {
     private final Logger logger = LoggerFactory.getLogger(BdioFileWriter.class)
-    
+
     BdioWriter createBdioWriter(final OutputStream outputStream, final String projectName, final String projectVersion) {
         def linkedDataContext = new LinkedDataContext()
         def bdioWriter = new BdioWriter(linkedDataContext, outputStream)
