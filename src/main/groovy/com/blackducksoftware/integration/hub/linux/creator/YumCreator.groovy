@@ -15,12 +15,12 @@ import javax.annotation.PostConstruct
 
 import org.springframework.stereotype.Component
 
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 @Component
 class YumCreator extends Creator {
     @PostConstruct
     void init() {
-        initializeValues(FileSuffixEnum.YUM, 'yum --version', 'yum list installed')
+        initValues(PackageManagerEnum.YUM, 'yum --version', 'yum list installed')
     }
 }

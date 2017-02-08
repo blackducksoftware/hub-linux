@@ -2,7 +2,7 @@ package com.blackducksoftware.integration.hub.linux
 
 import org.apache.commons.lang3.StringUtils
 
-enum OSEnum {
+enum OperatingSystemEnum {
     CENTOS ('centos'),
     DEBIAN('debian'),
     FEDORA('fedora'),
@@ -12,7 +12,7 @@ enum OSEnum {
 
     String forge
 
-    private OSEnum(String forge) {
+    private OperatingSystemEnum(String forge) {
         this.forge = forge
     }
 

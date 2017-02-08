@@ -14,15 +14,16 @@ package com.blackducksoftware.integration.hub.linux.extractor
 import javax.annotation.PostConstruct
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
+import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 class DpkgExtractor extends Extractor {
     @PostConstruct
     void init() {
-        initValues(FileSuffixEnum.DPKG)
+        initValues(PackageManagerEnum.DPKG)
     }
 
-    List<BdioComponentDetails> extract(String operatingSystem, File yumOutput) {
+    List<BdioComponentDetails> extract(OperatingSystemEnum operatingSystemEnum, File yumOutput) {
         def components = []
 
         boolean startOfComponents = false
@@ -35,7 +36,7 @@ class DpkgExtractor extends Extractor {
                     def(name,version,architecture,description) = componentInfo.tokenize(" ")
 
                     String externalId = "$name/$version/$architecture"
-                    def bdioComponentDetails = createBdioComponentDetails(operatingSystem, name, version, externalId)
+                    def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, name, version, externalId)
                     components.add(bdioComponentDetails)
                 }
             }

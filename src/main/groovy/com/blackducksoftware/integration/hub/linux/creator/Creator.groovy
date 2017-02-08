@@ -14,19 +14,19 @@ package com.blackducksoftware.integration.hub.linux.creator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 abstract class Creator {
     private final Logger logger = LoggerFactory.getLogger(getClass())
 
-    FileSuffixEnum fileSuffixEnum
+    PackageManagerEnum packageManager
     String testCommand
     String executionCommand
 
     abstract void init()
 
-    void initializeValues(FileSuffixEnum fileSuffixEnum, String testCommand, String executionCommand) {
-        this.fileSuffixEnum = fileSuffixEnum
+    void initValues(PackageManagerEnum packageManager, String testCommand, String executionCommand) {
+        this.packageManager = packageManager
         this.testCommand = testCommand
         this.executionCommand = executionCommand
     }

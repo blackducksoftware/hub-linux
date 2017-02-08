@@ -1,5 +1,7 @@
 package com.blackducksoftware.integration.hub.linux
 
+import groovy.io.FileType
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -12,8 +14,6 @@ import org.springframework.stereotype.Component
 import com.blackducksoftware.integration.hub.linux.creator.Creator
 import com.blackducksoftware.integration.hub.linux.extractor.Extractor
 import com.blackducksoftware.integration.hub.util.HostnameHelper
-
-import groovy.io.FileType
 
 @Component
 class HubLinuxManager {
@@ -44,9 +44,8 @@ class HubLinuxManager {
     List<Extractor> extractors
 
     void performInspection() {
-        String operatingSystemName = operatingSystemFinder.determineOperatingSystem()
-        OSEnum os = OSEnum.determineOperatingSystem(operatingSystemName)
-        String projectName = os.forge + "-" + HostnameHelper.getMyHostname()
+        OperatingSystemEnum operatingSystemEnum = operatingSystemFinder.determineOperatingSystem()
+        String projectName = operatingSystemEnum.forge + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
 
         def workingDirectory = new File(workingDirectoryPath)
@@ -57,7 +56,7 @@ class HubLinuxManager {
             if (!it.isCommandAvailable(commandTimeout)) {
                 logger.info("Can't create with ${it.getClass().name} - command is not available.")
             } else{
-                String filename = it.filename(os.forge)
+                String filename = it.filename(operatingSystemEnum.forge)
                 File outputFile = new File(workingDirectory, filename)
                 it.writeOutputFile(outputFile, commandTimeout)
                 logger.info('Created file ${outputFile.canonicalPath}')
@@ -70,7 +69,7 @@ class HubLinuxManager {
             extractors.each { extractor ->
                 if (extractor.shouldAttemptExtract(file)) {
                     logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
-                    def extractedComponents = extractor.extract(os.forge, file)
+                    def extractedComponents = extractor.extract(operatingSystemEnum.forge, file)
                     bdioComponentDetails.addAll(extractedComponents)
                 }
             }
