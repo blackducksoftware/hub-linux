@@ -19,6 +19,9 @@ import groovy.io.FileType
 class HubLinuxManager {
     private final Logger logger = LoggerFactory.getLogger(HubLinuxManager.class)
 
+    @Value('${extract.mode}')
+    String extractMode
+
     @Value('${working.directory}')
     String workingDirectoryPath
 
@@ -41,9 +44,8 @@ class HubLinuxManager {
     List<Extractor> extractors
 
     void performInspection() {
-        String operatingSystemName = operatingSystemFinder.determineOperatingSystem()
-        OSEnum os = OSEnum.determineOperatingSystem(operatingSystemName)
-        String projectName = os.forge + "-" + HostnameHelper.getMyHostname()
+        OperatingSystemEnum operatingSystemEnum = operatingSystemFinder.determineOperatingSystem()
+        String projectName = operatingSystemEnum.forge + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
 
         logger.info("Operating System: {}",operatingSystemName)
@@ -57,13 +59,12 @@ class HubLinuxManager {
             logger.info "Starting file creation with ${it.getClass().name}"
             if (!it.isCommandAvailable(commandTimeout)) {
                 logger.info("Can't create with ${it.getClass().name} - command is not available.")
-                return
+            } else{
+                String filename = it.filename(operatingSystemEnum.forge)
+                File outputFile = new File(workingDirectory, filename)
+                it.writeOutputFile(outputFile, commandTimeout)
+                logger.info('Created file ${outputFile.canonicalPath}')
             }
-
-            String filename = it.filename(os.forge)
-            File outputFile = new File(workingDirectory, filename)
-            it.writeOutputFile(outputFile, commandTimeout)
-            logger.info('Created file ${outputFile.canonicalPath}')
         }
 
         def bdioComponentDetails = []
@@ -72,7 +73,7 @@ class HubLinuxManager {
             extractors.each { extractor ->
                 if (extractor.shouldAttemptExtract(file)) {
                     logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
-                    def extractedComponents = extractor.extract(os.forge, file)
+                    def extractedComponents = extractor.extract(operatingSystemEnum.forge, file)
                     bdioComponentDetails.addAll(extractedComponents)
                 }
             }

@@ -16,26 +16,27 @@ import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
+import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 @Component
 class RpmExtractor extends Extractor {
     @PostConstruct
     void init() {
-        initValues(FileSuffixEnum.RPM)
+        initValues(PackageManagerEnum.RPM)
     }
 
     @Override
-    List<BdioComponentDetails> extract(String operatingSystem, File inputFile) {
+    List<BdioComponentDetails> extract(OperatingSystemEnum operatingSystemEnum, File inputFile) {
         def components = []
         inputFile.eachLine { line ->
-            components.add(extract(operatingSystem, line))
+            components.add(extract(operatingSystemEnum, line))
         }
 
         components
     }
 
-    BdioComponentDetails extract(String operatingSystem, String inputLine) {
+    BdioComponentDetails extract(OperatingSystemEnum operatingSystemEnum, String inputLine) {
         if (valid(inputLine)) {
             def lastDotIndex = inputLine.lastIndexOf('.')
             def arch = inputLine.substring(lastDotIndex + 1)
@@ -47,7 +48,7 @@ class RpmExtractor extends Extractor {
             def artifact = inputLine.substring(0, secondToLastDashIndex)
 
             String externalId = "${artifact}/${versionRelease}/${arch}"
-            return createBdioComponentDetails(operatingSystem, artifact, versionRelease, externalId)
+            return createBdioComponentDetails(operatingSystemEnum, artifact, versionRelease, externalId)
         }
 
         null

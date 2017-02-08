@@ -13,11 +13,14 @@ package com.blackducksoftware.integration.hub.linux.creator
 
 import javax.annotation.PostConstruct
 
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+import org.springframework.stereotype.Component
 
+import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
+
+@Component
 class DpkgCreator extends Creator {
     @PostConstruct
     void init() {
-        initializeValues(FileSuffixEnum.DPKG, 'dpkg --version', 'dpkg -l')
+        initValues(PackageManagerEnum.DPKG, 'dpkg --version', 'dpkg -l')
     }
 }

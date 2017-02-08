@@ -13,11 +13,14 @@ package com.blackducksoftware.integration.hub.linux.creator
 
 import javax.annotation.PostConstruct
 
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+import org.springframework.stereotype.Component
 
+import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
+
+@Component
 class YumCreator extends Creator {
     @PostConstruct
     void init() {
-        initializeValues(FileSuffixEnum.YUM, 'yum --version', 'yum list installed')
+        initValues(PackageManagerEnum.YUM, 'yum --version', 'yum list installed')
     }
 }

@@ -15,12 +15,12 @@ import javax.annotation.PostConstruct
 
 import org.springframework.stereotype.Component
 
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 @Component
 class AptCreator extends Creator {
     @PostConstruct
     void init() {
-        initializeValues(FileSuffixEnum.APT, 'apt --version', 'apt --installed list')
+        initValues(PackageManagerEnum.APT, 'apt --version', 'apt --installed list')
     }
 }

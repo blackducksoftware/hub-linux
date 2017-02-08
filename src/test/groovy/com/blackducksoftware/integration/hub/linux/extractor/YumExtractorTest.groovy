@@ -11,32 +11,53 @@
  */
 package com.blackducksoftware.integration.hub.linux.extractor
 
+import static org.junit.Assert.*
+
 import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.OSEnum
 
 class YumExtractorTest {
     @Test
     public void extractYumComponentsFile1(){
-        extractYumComponentsFromFile("centos_yum_output_1.txt")
+        extractYumComponentsFromFile('centos_yum_output_1.txt', 580,'python-backports-ssl_match_hostname','3.4.0.2-4.el7','noarch')
     }
 
     @Test
     public void extractYumComponentsFile2(){
-        extractYumComponentsFromFile("centos_yum_output_2.txt")
+        extractYumComponentsFromFile('centos_yum_output_2.txt', 631,'redhat-lsb-submod-multimedia','4.1-27.el7.centos.1','x86_64')
     }
 
     @Test
     public void extractYumComponentsFile3(){
-        extractYumComponentsFromFile("centos_yum_output_3.txt")
+        extractYumComponentsFromFile('centos_yum_output_3.txt', 1255,'at-spi-python','1.28.1-2.el6.centos','x86_64')
     }
 
-    public void extractYumComponentsFromFile(String fileName){
+    public void extractYumComponentsFromFile(String fileName, int size, String name, String version, String arch){
         URL url = this.getClass().getResource("/$fileName")
-        File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"))
+        File file = new File(URLDecoder.decode(url.getFile(), 'UTF-8'))
 
         YumExtractor extractor = new YumExtractor()
-        List<BdioComponentDetails> componentDetails =  extractor.extract("CentOS", file)
-        println(componentDetails.size())
+        List<BdioComponentDetails> bdioEntries =  extractor.extract(OSEnum.CENTOS.name(), file)
+
+        assertEquals(size, bdioEntries.size())
+        boolean foundTargetEntry = false
+        int validEntryCount = 0
+        for (final BdioComponentDetails bdioEntry : bdioEntries) {
+            if (bdioEntry != null) {
+                validEntryCount++
+                // println(bdioEntry.getExternalIdentifier())
+                def match = String.join("/",name,version,arch)
+                if (match.contentEquals(bdioEntry.getExternalIdentifier().getExternalId())) {
+                    foundTargetEntry = true
+                    assertEquals(name, bdioEntry.getName())
+                    assertEquals(version, bdioEntry.getVersion())
+                }
+            }
+        }
+
+        assertTrue(foundTargetEntry)
+        println(bdioEntries.size())
     }
 }

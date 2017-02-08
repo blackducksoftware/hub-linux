@@ -16,16 +16,17 @@ import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
+import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 @Component
 class YumExtractor extends Extractor {
     @PostConstruct
     void init() {
-        initValues(FileSuffixEnum.YUM)
+        initValues(PackageManagerEnum.YUM)
     }
 
-    List<BdioComponentDetails> extract(String operatingSystem, File yumOutput) {
+    List<BdioComponentDetails> extract(OperatingSystemEnum operatingSystemEnum, File yumOutput) {
         def components = []
         boolean startOfComponents = false
 
@@ -43,7 +44,7 @@ class YumExtractor extends Extractor {
                         String architecture = nameArch.substring(nameArch.lastIndexOf(".") + 1)
 
                         String externalId = "$name/$version/$architecture"
-                        def bdioComponentDetails = createBdioComponentDetails(operatingSystem, name, version, externalId)
+                        def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, name, version, externalId)
 
                         components.add(bdioComponentDetails)
                         componentColumns = []

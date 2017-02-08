@@ -11,11 +11,14 @@
  */
 package com.blackducksoftware.integration.hub.linux.creator
 
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
+import org.springframework.stereotype.Component
 
+import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
+
+@Component
 class RpmCreator extends Creator {
     @Override
     public void init() {
-        initializeValues(FileSuffixEnum.RPM, 'rpm --version', 'rpm -qa')
+        initValues(PackageManagerEnum.RPM, 'rpm --version', 'rpm -qa')
     }
 }
