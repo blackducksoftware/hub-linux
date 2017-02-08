@@ -1,10 +1,10 @@
 package com.blackducksoftware.integration.hub.linux
 
 enum PackageManagerEnum {
-    APT('_apt.txt'),
-    YUM('_yum.txt'),
-    RPM('_rpm.txt'),
-    DPKG('_dpkg.txt')
+    APT('apt.txt'),
+    YUM('yum.txt'),
+    RPM('rpm.txt'),
+    DPKG('dpkg.txt')
 
     String filenameSuffix
 

@@ -43,7 +43,7 @@ class HubLinuxManager {
 
     void performExtractFromLocalInspection() {
         OperatingSystemEnum operatingSystemEnum = operatingSystemFinder.determineOperatingSystem()
-        String projectName = operatingSystemEnum.forge + "-" + HostnameHelper.getMyHostname()
+        String projectName = HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
 
         logger.info("Operating System: {}",operatingSystemEnum.forge)
@@ -58,54 +58,51 @@ class HubLinuxManager {
             if (!it.isCommandAvailable(commandTimeout)) {
                 logger.info("Can't create with ${it.getClass().name} - command is not available.")
             } else{
-                String filename = it.filename(operatingSystemEnum.forge)
+                String filename = it.filename(projectName, projectVersionName, operatingSystemEnum)
                 File outputFile = new File(workingDirectory, filename)
                 it.writeOutputFile(outputFile, commandTimeout)
                 logger.info("Created file ${outputFile.canonicalPath}")
             }
         }
 
-        def allExtractionResults = extractAllBdioComponentDetailsFromWorkingDirectory(operatingSystemEnum,
-                workingDirectory)
-
-        createAndUploadBdioFile(workingDirectory, projectName, projectVersionName, allExtractionResults)
+        def allExtractionResults = extractAllBdioComponentDetailsFromWorkingDirectory(workingDirectory)
+        createAndUploadBdioFile(workingDirectory, allExtractionResults)
     }
 
-    private List<ExtractionResults> extractAllBdioComponentDetailsFromWorkingDirectory(OperatingSystemEnum operatingSystemEnum,
-            File workingDirectory) {
+    private List<ExtractionResults> extractAllBdioComponentDetailsFromWorkingDirectory(File workingDirectory) {
         def allExtractionResults = []
         workingDirectory.eachFile() { file ->
             logger.info("Processing file ${file.name}")
             extractors.each { extractor ->
                 if (extractor.shouldAttemptExtract(file)) {
                     logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
-                    def extractedComponents = extractor.extract(
-                            operatingSystemEnum, file)
-                    allExtractionResults.addAll(extractedComponents)
+                    def extractionResults = extractor.extract(file)
+                    allExtractionResults.addAll(extractionResults)
                 }
             }
         }
-        logger.info "Found ${allExtractionResults.size()} components."
         allExtractionResults
     }
 
-    private createAndUploadBdioFile(File workingDirectory, String projectName, String projectVersionName, List<ExtractionResults> allExtractionResults) {
-        def outputFile = new File(workingDirectory, "${projectName}_bdio.jsonld")
-        logger.info("Starting bdio creation using file: ${outputFile.canonicalPath}")
-        new FileOutputStream(outputFile).withStream { outputStream ->
-            def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, projectName, projectVersionName)
-            try {
-                allExtractionResults.each { bdioComponentDetails ->
-                    bdioFileWriter.writeComponent(bdioWriter, bdioComponentDetails)
+    private createAndUploadBdioFile(File workingDirectory, List<ExtractionResults> allExtractionResults) {
+        allExtractionResults.each { extractionResults ->
+            def outputFile = new File(workingDirectory, "${extractionResults.hubProjectName}_bdio.jsonld")
+            logger.info("Starting bdio creation using file: ${outputFile.canonicalPath}")
+            new FileOutputStream(outputFile).withStream { outputStream ->
+                def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, extractionResults.hubProjectName, extractionResults.hubProjectVersionName)
+                try {
+                    extractionResults.bdioComponentDetailsList.each { component ->
+                        bdioFileWriter.writeComponent(bdioWriter, component)
+                    }
+                } finally {
+                    bdioWriter.close()
                 }
-            } finally {
-                bdioWriter.close()
             }
-        }
 
-        if (hubClient.isValid()) {
-            hubClient.uploadBdioToHub(outputFile)
-            logger.info("Uploaded bdio to ${hubClient.hubUrl}")
+            if (hubClient.isValid()) {
+                hubClient.uploadBdioToHub(outputFile)
+                logger.info("Uploaded bdio to ${hubClient.hubUrl}")
+            }
         }
     }
 }

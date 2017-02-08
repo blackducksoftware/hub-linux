@@ -39,7 +39,7 @@ class YumExtractorTest {
         File file = new File(URLDecoder.decode(url.getFile(), 'UTF-8'))
 
         YumExtractor extractor = new YumExtractor()
-        List<BdioComponentDetails> bdioEntries =  extractor.extract(OperatingSystemEnum.CENTOS, file)
+        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(OperatingSystemEnum.CENTOS, file)
 
         assertEquals(size, bdioEntries.size())
         boolean foundTargetEntry = false
