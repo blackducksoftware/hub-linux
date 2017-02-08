@@ -13,8 +13,6 @@ import com.blackducksoftware.integration.hub.linux.creator.Creator
 import com.blackducksoftware.integration.hub.linux.extractor.Extractor
 import com.blackducksoftware.integration.hub.util.HostnameHelper
 
-import groovy.io.FileType
-
 @Component
 class HubLinuxManager {
     private final Logger logger = LoggerFactory.getLogger(HubLinuxManager.class)
@@ -67,37 +65,40 @@ class HubLinuxManager {
             }
         }
 
-        createAndUploadBdioFile(workingDirectory, projectName, projectVersionName, bdioComponentDetailsList)
+        def allExtractionResults = extractAllBdioComponentDetailsFromWorkingDirectory(workingDirectory)
+
+        createAndUploadBdioFile(workingDirectory, projectName, projectVersionName, allExtractionResults)
     }
 
-    private List<ExtractionResults> extractAllBdioComponentDetailsFromWorkingDirectory() {
-        def bdioComponentDetails = []
-        workingDirectory.eachFile(FileType.FILES) { file ->
-            logger.info("Processing file ${file.name}")
-            extractors.each { extractor ->
-                if (extractor.shouldAttemptExtract(file)) {
-                    logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
-                    def extractedComponents = extractor.extract(operatingSystemEnum.forge, file)
-                    bdioComponentDetails.addAll(extractedComponents)
-                }
-            }
-        }
-        logger.info "Found ${bdioComponentDetails.size()} components."
+    private List<ExtractionResults> extractAllBdioComponentDetailsFromWorkingDirectory(File workingDirectory) {
+        def allExtractionResults = []
+        //        workingDirectory.eachFile(FileType.FILES) { file ->
+        //            logger.info("Processing file ${file.name}")
+        //            extractors.each { extractor ->
+        //                if (extractor.shouldAttemptExtract(file)) {
+        //                    logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
+        //                    def extractedComponents = extractor.extract(operatingSystemEnum.forge, file)
+        //                    bdioComponentDetails.addAll(extractedComponents)
+        //                }
+        //            }
+        //        }
+        //logger.info "Found ${bdioComponentDetails.size()} components."
+        allExtractionResults
     }
 
-    private createAndUploadBdioFile(File workingDirectory, String projectName, String projectVersionName, List<BdioComponentDetails> bdioComponentDetailsList) {
+    private createAndUploadBdioFile(File workingDirectory, String projectName, String projectVersionName, List<ExtractionResults> allExtractionResults) {
         def outputFile = new File(workingDirectory, "${projectName}_bdio.jsonld")
         logger.info("Starting bdio creation using file: ${outputFile.canonicalPath}")
-        new FileOutputStream(outputFile).withStream { outputStream ->
-            def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, projectName, projectVersionName)
-            try {
-                bdioComponentDetailsList.each { bdioComponentDetails ->
-                    bdioFileWriter.writeComponent(bdioWriter, bdioComponentDetails)
-                }
-            } finally {
-                bdioWriter.close()
-            }
-        }
+        //        new FileOutputStream(outputFile).withStream { outputStream ->
+        //            def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, projectName, projectVersionName)
+        //            try {
+        //                bdioComponentDetailsList.each { bdioComponentDetails ->
+        //                    bdioFileWriter.writeComponent(bdioWriter, bdioComponentDetails)
+        //                }
+        //            } finally {
+        //                bdioWriter.close()
+        //            }
+        //        }
 
         if (hubClient.isValid()) {
             hubClient.uploadBdioToHub(outputFile)
