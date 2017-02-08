@@ -40,7 +40,6 @@ class YumExtractor extends Extractor {
                 if ('Installed Packages' == line) {
                     startOfComponents = true
                 } else if (startOfComponents) {
-                    logger.info("line: " + line)
                     componentColumns.addAll(line.tokenize(' '))
                     if ((componentColumns.size() == 3) && (!line.startsWith("Loaded plugins:"))) {
                         String nameArch = componentColumns.get(0)
@@ -50,13 +49,11 @@ class YumExtractor extends Extractor {
 
                         String externalId = "$name/$version/$architecture"
                         def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, name, version, externalId)
-
                         components.add(bdioComponentDetails)
                         componentColumns = []
                     } else  if (componentColumns.size() > 3) {
-                        //FIXME
-                        //                        throw new RuntimeException ("Parsing multi-line components has failed.")
-                        logger.warn("Skipping un-parsable component")
+                        logger.error("Parsing multi-line components has failed. $line")
+                        componentColumns = []
                     }
                 }
             }

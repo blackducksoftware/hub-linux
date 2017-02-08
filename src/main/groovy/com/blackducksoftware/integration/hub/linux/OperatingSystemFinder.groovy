@@ -2,6 +2,7 @@ package com.blackducksoftware.integration.hub.linux
 
 import javax.annotation.PostConstruct
 
+import org.apache.commons.lang3.StringUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class OperatingSystemFinder {
     private final Logger logger = LoggerFactory.getLogger(OperatingSystemFinder.class)
-    @Value('${linux.distro:""}')
+    @Value('${linux.distro}')
     String linuxDistro
 
     @Value('${command.timeout}')
@@ -24,17 +25,17 @@ class OperatingSystemFinder {
         commandCheckList.add(cmdObject)
     }
 
-    String determineOperatingSystem() {
-        //        if (!StringUtils.isBlank(linuxDistro)) {
-        //            // make sure it isn't empty
-        //            return linuxDistro
-        //        }
+    OperatingSystemEnum determineOperatingSystem() {
+        if (StringUtils.isNotBlank(linuxDistro)) {
+            // make sure it isn't empty
+            return linuxDistro
+        }
 
-        def osName = commandCheckList.findResult {
+        linuxDistro = commandCheckList.findResult {
             check(it.command,it.prefixMatch,it.delimeter)
         }
 
-        OperatingSystemEnum.determineOperatingSystem(osName)
+        OperatingSystemEnum.determineOperatingSystem(linuxDistro)
     }
 
     private String check(String command, String prefixMatch, String delimeter) {

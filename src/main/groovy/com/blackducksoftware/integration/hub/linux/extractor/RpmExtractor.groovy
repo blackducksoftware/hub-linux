@@ -34,7 +34,10 @@ class RpmExtractor extends Extractor {
     List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File inputFile) {
         def components = []
         inputFile.eachLine { line ->
-            components.add(extract(operatingSystemEnum, line))
+            BdioComponentDetails componentDetails = extract(operatingSystemEnum, line)
+            if(componentDetails != null){
+                components.add(componentDetails)
+            }
         }
 
         components
