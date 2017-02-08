@@ -19,9 +19,6 @@ import groovy.io.FileType
 class HubLinuxManager {
     private final Logger logger = LoggerFactory.getLogger(HubLinuxManager.class)
 
-    @Value('${extract.mode}')
-    String extractMode
-
     @Value('${working.directory}')
     String workingDirectoryPath
 
@@ -43,7 +40,10 @@ class HubLinuxManager {
     @Autowired
     List<Extractor> extractors
 
-    void performInspection() {
+    void performExtractFromRemoteInspection() {
+    }
+
+    void performExtractFromLocalInspection() {
         OperatingSystemEnum operatingSystemEnum = operatingSystemFinder.determineOperatingSystem()
         String projectName = operatingSystemEnum.forge + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())

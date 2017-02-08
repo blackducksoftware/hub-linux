@@ -5,12 +5,16 @@ import javax.annotation.PostConstruct
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.builder.SpringApplicationBuilder
 
 @SpringBootApplication
 class Application {
     private final Logger logger = LoggerFactory.getLogger(Application.class)
+
+    @Value('${extract.mode}')
+    String extractMode
 
     @Autowired
     HubClient hubClient
@@ -33,6 +37,10 @@ class Application {
             println("Your Hub configuration is not valid: ${e.message}")
         }
 
-        hubLinuxManager.performInspection()
+        if ('local' == extractMode) {
+            hubLinuxManager.performExtractFromLocalInspection()
+        } else {
+            hubLinuxManager.performExtractFromRemoteInspection()
+        }
     }
 }
