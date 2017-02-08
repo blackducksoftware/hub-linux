@@ -8,7 +8,7 @@ enum PackageManagerEnum {
 
     String filenameSuffix
 
-    private FileSuffixEnum(String filenameSuffix) {
+    private PackageManagerEnum(String filenameSuffix) {
         this.filenameSuffix = filenameSuffix
     }
 

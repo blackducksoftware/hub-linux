@@ -19,20 +19,20 @@ import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 abstract class Creator {
     private final Logger logger = LoggerFactory.getLogger(getClass())
 
-    PackageManagerEnum packageManager
+    PackageManagerEnum packageManagerEnum
     String testCommand
     String executionCommand
 
     abstract void init()
 
-    void initValues(PackageManagerEnum packageManager, String testCommand, String executionCommand) {
-        this.packageManager = packageManager
+    void initValues(PackageManagerEnum packageManagerEnum, String testCommand, String executionCommand) {
+        this.packageManagerEnum = packageManagerEnum
         this.testCommand = testCommand
         this.executionCommand = executionCommand
     }
 
     String filename(String forge) {
-        "${forge}${fileSuffixEnum.suffix}"
+        "${forge}${packageManagerEnum.filenameSuffix}"
     }
 
     boolean isCommandAvailable(long timeout) {
