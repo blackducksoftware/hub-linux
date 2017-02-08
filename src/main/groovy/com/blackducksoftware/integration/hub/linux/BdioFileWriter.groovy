@@ -1,5 +1,7 @@
 package com.blackducksoftware.integration.hub.linux
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.bdio.io.BdioWriter
@@ -10,6 +12,8 @@ import com.blackducksoftware.bdio.model.Project
 
 @Component
 class BdioFileWriter {
+    private final Logger logger = LoggerFactory.getLogger(BdioFileWriter.class)
+    
     BdioWriter createBdioWriter(final OutputStream outputStream, final String projectName, final String projectVersion) {
         def linkedDataContext = new LinkedDataContext()
         def bdioWriter = new BdioWriter(linkedDataContext, outputStream)
@@ -31,6 +35,10 @@ class BdioFileWriter {
     }
 
     void writeComponent(BdioWriter bdioWriter, BdioComponentDetails bdioComponentDetails) {
+        if (bdioComponentDetails == null) {
+            logger.warn("writeComponent(): bdioComponentDetails is null")
+            return;
+        }
         def component = bdioComponentDetails.createBdioComponent()
         bdioWriter.write(component)
     }
