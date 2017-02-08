@@ -1,7 +1,5 @@
 package com.blackducksoftware.integration.hub.linux
 
-import groovy.io.FileType
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -63,6 +61,10 @@ class HubLinuxManager {
             }
         }
 
+        createAndUploadBdioFile(workingDirectory, projectName, projectVersionName, bdioComponentDetailsList)
+    }
+
+    private List<ExtractionResults> extractAllBdioComponentDetailsFromWorkingDirectory() {
         def bdioComponentDetails = []
         workingDirectory.eachFile(FileType.FILES) { file ->
             logger.info("Processing file ${file.name}")
@@ -74,16 +76,17 @@ class HubLinuxManager {
                 }
             }
         }
-
         logger.info "Found ${bdioComponentDetails.size()} components."
+    }
 
+    private createAndUploadBdioFile(File workingDirectory, String projectName, String projectVersionName, List<BdioComponentDetails> bdioComponentDetailsList) {
         def outputFile = new File(workingDirectory, "${projectName}_bdio.jsonld")
         logger.info("Starting bdio creation using file: ${outputFile.canonicalPath}")
         new FileOutputStream(outputFile).withStream { outputStream ->
             def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, projectName, projectVersionName)
             try {
-                bdioComponentDetails.each { component ->
-                    bdioFileWriter.writeComponent(bdioWriter, component)
+                bdioComponentDetailsList.each { bdioComponentDetails ->
+                    bdioFileWriter.writeComponent(bdioWriter, bdioComponentDetails)
                 }
             } finally {
                 bdioWriter.close()
