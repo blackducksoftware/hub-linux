@@ -84,6 +84,7 @@ class HubLinuxManager {
                     logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
                     def extractedComponents = extractor.extract(
                             operatingSystemEnum, file)
+                    logger.info("Found $extractedComponents.size components in $file.name")
                     allExtractionResults.addAll(extractedComponents)
                 }
             }

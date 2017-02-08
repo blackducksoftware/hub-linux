@@ -28,13 +28,13 @@ class Application {
 
     @PostConstruct
     void init() {
-        println 'Hello Team!!!'
+        logger.info 'Hello Team!!!'
 
         try {
             hubClient.testHubConnection()
-            println 'Your Hub configuration is valid and a successful connection to the Hub was established.'
+            logger.info 'Your Hub configuration is valid and a successful connection to the Hub was established.'
         } catch (Exception e) {
-            println("Your Hub configuration is not valid: ${e.message}")
+            logger.error("Your Hub configuration is not valid: ${e.message}")
         }
 
         if ('local' == extractMode) {
