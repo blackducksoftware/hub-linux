@@ -1,7 +1,5 @@
 package com.blackducksoftware.integration.hub.linux
 
-import groovy.io.FileType
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -14,6 +12,8 @@ import org.springframework.stereotype.Component
 import com.blackducksoftware.integration.hub.linux.creator.Creator
 import com.blackducksoftware.integration.hub.linux.extractor.Extractor
 import com.blackducksoftware.integration.hub.util.HostnameHelper
+
+import groovy.io.FileType
 
 @Component
 class HubLinuxManager {
@@ -45,6 +45,10 @@ class HubLinuxManager {
         OSEnum os = OSEnum.determineOperatingSystem(operatingSystemName)
         String projectName = os.forge + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
+
+        logger.info("Operating System: {}",operatingSystemName)
+        logger.info("Project Name:     {}",projectName)
+        logger.info("Project Version:  {}",projectVersionName)
 
         def workingDirectory = new File(workingDirectoryPath)
         workingDirectory.mkdirs()
