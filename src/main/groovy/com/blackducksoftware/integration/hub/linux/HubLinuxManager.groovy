@@ -65,26 +65,27 @@ class HubLinuxManager {
             }
         }
 
-        def allExtractionResults = extractAllBdioComponentDetailsFromWorkingDirectory(workingDirectory)
+        def allExtractionResults = extractAllBdioComponentDetailsFromWorkingDirectory(operatingSystemEnum,
+                workingDirectory)
 
         createAndUploadBdioFile(workingDirectory, projectName, projectVersionName, allExtractionResults)
     }
 
-    private List<ExtractionResults> extractAllBdioComponentDetailsFromWorkingDirectory(File workingDirectory) {
+    private List<ExtractionResults> extractAllBdioComponentDetailsFromWorkingDirectory(OperatingSystemEnum operatingSystemEnum,
+            File workingDirectory) {
         def allExtractionResults = []
         workingDirectory.eachFile() { file ->
             logger.info("Processing file ${file.name}")
             extractors.each { extractor ->
                 if (extractor.shouldAttemptExtract(file)) {
                     logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
-                    /////////////// TODO un hard code OS
-                    def extractedComponents = extractor.extract(OperatingSystemEnum.CENTOS, file)
-                    //                    def extractedComponents = extractor.extract(operatingSystemEnum.forge, file)
+                    def extractedComponents = extractor.extract(
+                            operatingSystemEnum, file)
                     allExtractionResults.addAll(extractedComponents)
                 }
             }
         }
-        logger.info "Found ${allExtractionResults.size()} components."  // TODO FIX
+        logger.info "Found ${allExtractionResults.size()} components."
         allExtractionResults
     }
 
