@@ -1,6 +1,6 @@
 buildscript {
     repositories { mavenCentral() }
-    dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.3.RELEASE") }
+    dependencies { classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.1.RELEASE") }
 }
 
 apply plugin: 'groovy'
@@ -9,12 +9,6 @@ apply plugin: 'eclipse'
 
 tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 tasks.withType(GroovyCompile) { options.encoding = 'UTF-8' }
-
-task "createDirs" << {
-    sourceSets*.java.srcDirs*.each { it.mkdirs() }
-    sourceSets*.groovy.srcDirs*.each { it.mkdirs() }
-    sourceSets*.resources.srcDirs*.each { it.mkdirs() }
-}
 
 group = 'com.blackducksoftware.integration'
 version = '0.0.1-SNAPSHOT'

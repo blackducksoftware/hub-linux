@@ -19,6 +19,9 @@ import com.blackducksoftware.integration.hub.util.HostnameHelper
 class HubLinuxManager {
     private final Logger logger = LoggerFactory.getLogger(HubLinuxManager.class)
 
+    @Value('${extract.mode}')
+    String extractMode
+
     @Value('${working.directory}')
     String workingDirectoryPath
 
