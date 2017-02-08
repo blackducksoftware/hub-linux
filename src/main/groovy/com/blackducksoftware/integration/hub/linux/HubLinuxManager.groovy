@@ -25,6 +25,9 @@ class HubLinuxManager {
     @Value('${command.timeout}')
     long commandTimeout
 
+    @Value('${linux.distro}')
+    String linuxDistro
+
     @Autowired
     OperatingSystemFinder operatingSystemFinder
 
@@ -41,7 +44,8 @@ class HubLinuxManager {
     List<Extractor> extractors
 
     void performInspection() {
-        String operatingSystemName = operatingSystemFinder.determineOperatingSystem()
+        //String operatingSystemName = operatingSystemFinder.determineOperatingSystem()
+        String operatingSystemName = linuxDistro
         OSEnum os = OSEnum.determineOperatingSystem(operatingSystemName)
         String projectName = os.forge + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
