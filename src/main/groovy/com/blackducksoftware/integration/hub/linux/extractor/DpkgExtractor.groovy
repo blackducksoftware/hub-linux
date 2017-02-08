@@ -26,7 +26,7 @@ class DpkgExtractor extends Extractor {
         initValues(PackageManagerEnum.DPKG)
     }
 
-    List<BdioComponentDetails> extract(OperatingSystemEnum operatingSystemEnum, File yumOutput) {
+    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File yumOutput) {
         def components = []
 
         boolean startOfComponents = false

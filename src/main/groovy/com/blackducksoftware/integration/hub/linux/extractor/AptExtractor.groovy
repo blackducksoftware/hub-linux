@@ -31,7 +31,7 @@ class AptExtractor extends Extractor {
     }
 
     @Override
-    List<BdioComponentDetails> extract(OperatingSystemEnum operatingSystemEnum, File inputFile) {
+    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File inputFile) {
         def components = []
 
         inputFile.eachLine { line ->

@@ -13,11 +13,16 @@ package com.blackducksoftware.integration.hub.linux.creator
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 
+import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 abstract class Creator {
     private final Logger logger = LoggerFactory.getLogger(getClass())
+
+    @Value('${filename.separator}')
+    String filenameSeparator
 
     PackageManagerEnum packageManagerEnum
     String testCommand
@@ -31,8 +36,14 @@ abstract class Creator {
         this.executionCommand = executionCommand
     }
 
-    String filename(String forge) {
-        "${forge}${packageManagerEnum.filenameSuffix}"
+    String filename(String hubProjectName, String hubProjectVersionName, OperatingSystemEnum operatingSystemEnum) {
+        def pieces = [
+            hubProjectName,
+            hubProjectVersionName,
+            operatingSystemEnum.forge,
+            packageManagerEnum.filenameSuffix
+        ]
+        pieces.join(filenameSeparator)
     }
 
     boolean isCommandAvailable(long timeout) {

@@ -49,7 +49,7 @@ class RpmExtractorTest {
         final URL url = this.getClass().getResource("/$fileName")
         final File file = new File(URLDecoder.decode(url.getFile(), "UTF-8"))
 
-        List<BdioComponentDetails> bdioEntries = extractor.extract(OperatingSystemEnum.CENTOS, file)
+        List<BdioComponentDetails> bdioEntries = extractor.extractComponents(OperatingSystemEnum.CENTOS, file)
         assertEquals(size, bdioEntries.size())
         boolean foundTargetEntry = false
         int validEntryCount = 0

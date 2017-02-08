@@ -27,7 +27,7 @@ class AptListTest {
         AptExtractor extractor = new AptExtractor()
         URL url = this.getClass().getResource("/$fileName")
         File file = new File(URLDecoder.decode(url.getFile(), 'UTF-8'))
-        List<BdioComponentDetails> bdioEntries =  extractor.extract(OperatingSystemEnum.UBUNTU, file)
+        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(OperatingSystemEnum.UBUNTU, file)
 
         assertEquals(size, bdioEntries.size())
         boolean foundTargetEntry = false
