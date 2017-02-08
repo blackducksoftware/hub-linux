@@ -13,6 +13,8 @@ package com.blackducksoftware.integration.hub.linux.extractor
 
 import javax.annotation.PostConstruct
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
@@ -21,6 +23,8 @@ import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 @Component
 class YumExtractor extends Extractor {
+    private final Logger logger = LoggerFactory.getLogger(YumExtractor.class)
+
     @PostConstruct
     void init() {
         initValues(PackageManagerEnum.YUM)
@@ -36,8 +40,9 @@ class YumExtractor extends Extractor {
                 if ('Installed Packages' == line) {
                     startOfComponents = true
                 } else if (startOfComponents) {
+                    logger.info("line: " + line)
                     componentColumns.addAll(line.tokenize(' '))
-                    if (componentColumns.size() == 3) {
+                    if ((componentColumns.size() == 3) && (!line.startsWith("Loaded plugins:"))) {
                         String nameArch = componentColumns.get(0)
                         String version = componentColumns.get(1)
                         String name =nameArch.substring(0, nameArch.lastIndexOf("."))
@@ -50,7 +55,8 @@ class YumExtractor extends Extractor {
                         componentColumns = []
                     } else  if (componentColumns.size() > 3) {
                         //FIXME
-                        throw new RuntimeException ("Parsing multi-line components has failed.")
+                        //                        throw new RuntimeException ("Parsing multi-line components has failed.")
+                        logger.warn("Skipping un-parsable component")
                     }
                 }
             }
