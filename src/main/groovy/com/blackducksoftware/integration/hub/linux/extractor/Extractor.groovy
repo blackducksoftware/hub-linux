@@ -26,7 +26,7 @@ abstract class Extractor {
     }
 
     ExtractionResults extract(File inputFile) {
-        def (hubProjectName, hubProjectVersionName, forge, packageManager) = inputFile.name.tokenize(filenameSeparator)
+        def (hubProjectName, hubProjectVersionName, forge, packageManager) = inputFile.name.split(filenameSeparator)
         OperatingSystemEnum operatingSystemEnum = OperatingSystemEnum.determineOperatingSystem(forge)
 
         def components = extractComponents(operatingSystemEnum, inputFile)

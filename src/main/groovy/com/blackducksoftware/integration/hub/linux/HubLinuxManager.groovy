@@ -72,39 +72,56 @@ class HubLinuxManager {
         createAndUploadBdioFile(workingDirectory, allExtractionResults)
     }
 
-    private List<ExtractionResults> extractAllBdioComponentDetailsFromWorkingDirectory(File workingDirectory) {
-        def allExtractionResults = []
+    private Map extractAllBdioComponentDetailsFromWorkingDirectory(File workingDirectory) {
+        def projectToVersionsWithComponents = [:]
         workingDirectory.eachFile() { file ->
             logger.info("Processing file ${file.name}")
             extractors.each { extractor ->
                 if (extractor.shouldAttemptExtract(file)) {
                     logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
                     def extractionResults = extractor.extract(file)
-                    allExtractionResults.addAll(extractionResults)
+                    def project = extractionResults.hubProjectName
+                    def version = extractionResults.hubProjectVersionName
+                    def components = extractionResults.bdioComponentDetailsList
+                    if (projectToVersionsWithComponents.containsKey(project)) {
+                        if (projectToVersionsWithComponents.get(project).containsKey(version)) {
+                            projectToVersionsWithComponents.get(project).get(version).addAll(components)
+                        } else {
+                            projectToVersionsWithComponents.get(project).put(version, components)
+                        }
+                    } else {
+                        Map<String, List<BdioComponentDetails>> versionToComponents = new HashMap<>()
+                        versionToComponents.put(version, components)
+                        projectToVersionsWithComponents.put(project, versionToComponents)
+                    }
                 }
             }
         }
-        allExtractionResults
+
+        projectToVersionsWithComponents
     }
 
-    private createAndUploadBdioFile(File workingDirectory, List<ExtractionResults> allExtractionResults) {
-        allExtractionResults.each { extractionResults ->
-            def outputFile = new File(workingDirectory, "${extractionResults.hubProjectName}_bdio.jsonld")
-            logger.info("Starting bdio creation using file: ${outputFile.canonicalPath}")
-            new FileOutputStream(outputFile).withStream { outputStream ->
-                def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, extractionResults.hubProjectName, extractionResults.hubProjectVersionName)
-                try {
-                    extractionResults.bdioComponentDetailsList.each { component ->
-                        bdioFileWriter.writeComponent(bdioWriter, component)
+    private createAndUploadBdioFile(File workingDirectory, Map projectToVersionsWithComponents) {
+        for (String project : projectToVersionsWithComponents.keySet()) {
+            Map<String, List<BdioComponentDetails>> versionToComponents = projectToVersionsWithComponents.get(project)
+            for (String version : versionToComponents.keySet()) {
+                def outputFile = new File(workingDirectory, "${project}_${version}_bdio.jsonld")
+                logger.info("Starting bdio creation using file: ${outputFile.canonicalPath} containing ${versionToComponents.get(version).size()} components")
+                new FileOutputStream(outputFile).withStream { outputStream ->
+                    def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, project, version)
+                    try {
+                        for (BdioComponentDetails bdioComponent : versionToComponents.get(version)) {
+                            bdioFileWriter.writeComponent(bdioWriter, bdioComponent)
+                        }
+                    } finally {
+                        bdioWriter.close()
                     }
-                } finally {
-                    bdioWriter.close()
                 }
-            }
 
-            if (hubClient.isValid()) {
-                hubClient.uploadBdioToHub(outputFile)
-                logger.info("Uploaded bdio to ${hubClient.hubUrl}")
+                if (hubClient.isValid()) {
+                    hubClient.uploadBdioToHub(outputFile)
+                    logger.info("Uploaded bdio to ${hubClient.hubUrl}")
+                }
             }
         }
     }

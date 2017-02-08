@@ -9,6 +9,14 @@ import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 
 class AptListTest {
     @Test
+    void testThing() {
+        def (hubProjectName, hubProjectVersionName, forge, packageManager) = 'int-bamboo01_bdsi_2017-02-08_bdsi_ubuntu_bdsi_apt.txt'.split('_bdsi_')
+        println hubProjectName
+        println hubProjectVersionName
+        println forge
+        println packageManager
+    }
+    @Test
     void testExtractingAptFile1() {
         extractAptComponentsFromFile('ubuntu_apt_package_list_1.txt', 714,'python3-commandnotfound','0.3ubuntu12')
     }
