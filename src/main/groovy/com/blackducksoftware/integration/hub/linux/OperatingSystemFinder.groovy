@@ -34,7 +34,7 @@ class OperatingSystemFinder {
             check(it.command,it.prefixMatch,it.delimeter)
         }
 
-        osName
+        OperatingSystemEnum.determineOperatingSystem(osName)
     }
 
     private String check(String command, String prefixMatch, String delimeter) {

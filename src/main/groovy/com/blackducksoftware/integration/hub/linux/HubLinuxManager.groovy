@@ -48,7 +48,7 @@ class HubLinuxManager {
         String projectName = operatingSystemEnum.forge + "-" + HostnameHelper.getMyHostname()
         String projectVersionName = DateTimeFormatter.ISO_LOCAL_DATE.format(LocalDate.now())
 
-        logger.info("Operating System: {}",operatingSystemName)
+        logger.info("Operating System: {}",operatingSystemEnum.forge)
         logger.info("Project Name:     {}",projectName)
         logger.info("Project Version:  {}",projectVersionName)
 
