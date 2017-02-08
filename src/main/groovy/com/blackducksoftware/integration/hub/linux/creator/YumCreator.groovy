@@ -13,8 +13,11 @@ package com.blackducksoftware.integration.hub.linux.creator
 
 import javax.annotation.PostConstruct
 
+import org.springframework.stereotype.Component
+
 import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
+@Component
 class YumCreator extends Creator {
     @PostConstruct
     void init() {

@@ -42,10 +42,9 @@ abstract class Creator {
 
             return proc.exitValue() == 0
         } catch(Exception e) {
-            logger.error("Error executing test command {}",testCommand,e)
+            logger.debug("Error executing test command {}",testCommand,e)
+            return false;
         }
-
-        false
     }
 
     void writeOutputFile(File file, long timeout) {

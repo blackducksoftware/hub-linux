@@ -11,8 +11,11 @@
  */
 package com.blackducksoftware.integration.hub.linux.creator
 
+import org.springframework.stereotype.Component
+
 import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
 
+@Component
 class RpmCreator extends Creator {
     @Override
     public void init() {

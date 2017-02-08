@@ -1,7 +1,5 @@
 package com.blackducksoftware.integration.hub.linux
 
-import groovy.io.FileType
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -14,6 +12,8 @@ import org.springframework.stereotype.Component
 import com.blackducksoftware.integration.hub.linux.creator.Creator
 import com.blackducksoftware.integration.hub.linux.extractor.Extractor
 import com.blackducksoftware.integration.hub.util.HostnameHelper
+
+import groovy.io.FileType
 
 @Component
 class HubLinuxManager {
@@ -56,13 +56,12 @@ class HubLinuxManager {
             logger.info "Starting file creation with ${it.getClass().name}"
             if (!it.isCommandAvailable(commandTimeout)) {
                 logger.info("Can't create with ${it.getClass().name} - command is not available.")
-                return
+            } else{
+                String filename = it.filename(os.forge)
+                File outputFile = new File(workingDirectory, filename)
+                it.writeOutputFile(outputFile, commandTimeout)
+                logger.info('Created file ${outputFile.canonicalPath}')
             }
-
-            String filename = it.filename(os.forge)
-            File outputFile = new File(workingDirectory, filename)
-            it.writeOutputFile(outputFile, commandTimeout)
-            logger.info('Created file ${outputFile.canonicalPath}')
         }
 
         def bdioComponentDetails = []
