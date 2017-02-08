@@ -61,7 +61,7 @@ class HubLinuxManager {
                 String filename = it.filename(operatingSystemEnum.forge)
                 File outputFile = new File(workingDirectory, filename)
                 it.writeOutputFile(outputFile, commandTimeout)
-                logger.info('Created file ${outputFile.canonicalPath}')
+                logger.info("Created file ${outputFile.canonicalPath}")
             }
         }
 
