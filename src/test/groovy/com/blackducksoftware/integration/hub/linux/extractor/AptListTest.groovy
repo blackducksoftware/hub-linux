@@ -1,21 +1,11 @@
 package com.blackducksoftware.integration.hub.linux.extractor
 
-import org.junit.Assert
 import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 import com.blackducksoftware.integration.hub.linux.OSEnum
 
 class AptListTest {
-    @Test
-    void testCreatingCentosExternalIdentifier() {
-        String operatingSystem = 'CentOS Linux'
-        def extractor = new AptExtractor()
-        def externalIdentifier = extractor.createLinuxIdentifier(operatingSystem, 'name/version')
-        Assert.assertEquals('centos', externalIdentifier.externalSystemTypeId)
-        Assert.assertEquals('name/version', externalIdentifier.externalId)
-    }
-
     @Test
     void testExtractingAptFile1() {
         extractAptComponentsFromFile("ubuntu_apt_package_list_1.txt")

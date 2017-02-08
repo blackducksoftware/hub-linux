@@ -16,38 +16,41 @@ import static org.junit.Assert.assertFalse
 import static org.junit.Assert.assertNotNull
 import static org.junit.Assert.assertTrue
 
-import org.junit.Ignore
 import org.junit.Test
 
-import com.blackducksoftware.integration.hub.linux.FileSuffixEnum
-
-@Ignore
 class CreatorTest {
     @Test
     void testCommandAvailableFalse() {
-        def creator = new AptCreator(FileSuffixEnum.APT, 'a_bad_cmd_','' )
-        assertFalse creator.isCommandAvailable()
+        def creator = [init: {}] as Creator
+        creator.testCommand = 'a_bad_cmd_'
+        creator.executionCommand = ''
+        assertFalse creator.isCommandAvailable(120000)
     }
 
     @Test
     void testCommandAvailableTrue() {
-        def creator = new AptCreator(FileSuffixEnum.APT, 'ls -al','' )
-        assertTrue creator.isCommandAvailable()
+        def creator = [init: {}] as Creator
+        creator.testCommand = 'ls -al'
+        creator.executionCommand = ''
+        assertTrue creator.isCommandAvailable(120000)
     }
 
     @Test
     void testCreateOutputInvalidCommand() {
-        def creator = new AptCreator(FileSuffixEnum.APT, '','a_bad_cmd_ --version' )
+        def creator = [init: {}] as Creator
+        creator.testCommand = ''
+        creator.executionCommand = 'a_bad_cmd_ --version'
+
         def directory = new File("./build/tmp")
-        def fileName = "creator_test_file.txt"
-        def file = creator.createOutputFile(directory, fileName)
+        def file = new File(directory, "creator_test_file.txt")
+        creator.writeOutputFile(file, 120000)
 
         System.out.println("testCreateOutputInvalidCommand: file = "+ file.getCanonicalPath())
         def directoryPath = directory.getCanonicalPath()
 
         assertNotNull file
         assertEquals(directory.getCanonicalPath(), file.getParentFile().getCanonicalPath())
-        assertEquals(fileName, file.getName())
+        assertEquals('creator_test_file.txt', file.getName())
         assertFalse file.exists()
         assertEquals(file.size(), 0)
 
@@ -56,10 +59,13 @@ class CreatorTest {
 
     @Test
     void testCreateOutputCommand() {
-        def creator = new AptCreator(FileSuffixEnum.APT, 'ls -al','ls -al' )
+        def creator = [init: {}] as Creator
+        creator.testCommand = 'ls -al'
+        creator.executionCommand = 'ls -al'
+
         def directory = new File("./build/tmp")
-        def fileName = "creator_test_file.txt"
-        def file = creator.createOutputFile(directory, fileName)
+        def file = new File(directory, "creator_test_file.txt")
+        creator.writeOutputFile(file, 120000)
 
         System.out.println("testCreateOutputCommand: file = "+ file.getCanonicalPath())
         def directoryPath = directory.getCanonicalPath()
@@ -68,7 +74,7 @@ class CreatorTest {
         assertTrue file.isFile()
         assertTrue(file.size() > 0)
         assertEquals(directory.getCanonicalPath(), file.getParentFile().getCanonicalPath())
-        assertEquals(fileName, file.getName())
+        assertEquals("creator_test_file.txt", file.getName())
 
         file.delete()
     }
