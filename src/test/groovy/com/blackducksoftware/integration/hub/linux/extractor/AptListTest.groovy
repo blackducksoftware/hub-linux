@@ -5,7 +5,7 @@ import static org.junit.Assert.*
 import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
-import com.blackducksoftware.integration.hub.linux.OSEnum
+import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 
 class AptListTest {
     @Test
@@ -27,7 +27,7 @@ class AptListTest {
         AptExtractor extractor = new AptExtractor()
         URL url = this.getClass().getResource("/$fileName")
         File file = new File(URLDecoder.decode(url.getFile(), 'UTF-8'))
-        List<BdioComponentDetails> bdioEntries =  extractor.extract(OSEnum.UBUNTU.name(), file)
+        List<BdioComponentDetails> bdioEntries =  extractor.extract(OperatingSystemEnum.UBUNTU, file)
 
         assertEquals(size, bdioEntries.size())
         boolean foundTargetEntry = false

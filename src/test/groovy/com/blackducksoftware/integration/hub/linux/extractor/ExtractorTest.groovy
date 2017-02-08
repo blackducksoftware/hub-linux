@@ -4,12 +4,13 @@ import static org.junit.Assert.*
 
 import org.junit.Test
 
+import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
+
 class ExtractorTest {
     @Test
     void testCreatingCentosExternalIdentifier() {
-        String operatingSystem = 'CentOS Linux'
         def extractor = [init: {}] as Extractor
-        def externalIdentifier = extractor.createLinuxIdentifier(operatingSystem, 'name/version')
+        def externalIdentifier = extractor.createLinuxIdentifier(OperatingSystemEnum.CENTOS, 'name/version')
         assertEquals('centos', externalIdentifier.externalSystemTypeId)
         assertEquals('name/version', externalIdentifier.externalId)
     }

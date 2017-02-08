@@ -13,10 +13,13 @@ package com.blackducksoftware.integration.hub.linux.extractor
 
 import javax.annotation.PostConstruct
 
+import org.springframework.stereotype.Component
+
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
+@Component
 class DpkgExtractor extends Extractor {
     @PostConstruct
     void init() {
