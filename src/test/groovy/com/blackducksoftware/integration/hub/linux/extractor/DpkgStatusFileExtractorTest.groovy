@@ -16,26 +16,38 @@ import static org.junit.Assert.*
 import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.BdioFileWriter
 import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 
-class DpkgExtractorTest {
+class DpkgStatusFileExtractorTest {
     @Test
-    public void extractDpkgComponentsFile1(){
-        extractDpkgComponentsFromFile('ubuntu_dpkg_output_1.txt',745,'linux-headers-3.13.0-107-generic','3.13.0-107.154','amd64')
+    public void extractDpkgComponentsFromStatusFile1(){
+        List<BdioComponentDetails> bdioEntries= extractDpkgComponentsFromStatusFile('status',98,'libpam-modules-bin','1.1.8-3.2ubuntu2','amd64')
+        def outputFile = new File(new File('.'), "Dpkg_Status_File_bdio.jsonld")
+        if(outputFile.exists()){
+            outputFile.delete()
+        }
+        def bdioFileWriter = new BdioFileWriter()
+        def project = 'DpkgStatusFile'
+        def version = '1'
+        new FileOutputStream(outputFile).withStream { outputStream ->
+            def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, project, version)
+            try {
+                for (BdioComponentDetails bdioComponent : bdioEntries) {
+                    bdioFileWriter.writeComponent(bdioWriter, bdioComponent)
+                }
+            } finally {
+                bdioWriter.close()
+            }
+        }
     }
 
-    @Test
-    public void extractDpkgComponentsFile2(){
-        extractDpkgComponentsFromFile('ubuntu_dpkg_output_2.txt',98,'sed','4.2.2-7','amd64')
-    }
-
-
-    public void extractDpkgComponentsFromFile(String fileName, int size, String name, String version, String arch){
+    public List<BdioComponentDetails> extractDpkgComponentsFromStatusFile(String fileName, int size, String name, String version, String arch){
         URL url = this.getClass().getResource("/$fileName")
         File file = new File(URLDecoder.decode(url.getFile(), 'UTF-8'))
 
-        DpkgExtractor extractor = new DpkgExtractor()
-        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(OperatingSystemEnum.UBUNTU, file)
+        DpkgStatusFileExtractor extractor = new DpkgStatusFileExtractor()
+        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(OperatingSystemEnum.DEBIAN, file)
 
         assertEquals(size, bdioEntries.size())
         boolean foundTargetEntry = false
@@ -55,5 +67,6 @@ class DpkgExtractorTest {
         assertEquals(validEntryCount, bdioEntries.size())
         assertTrue(foundTargetEntry)
         println(bdioEntries.size())
+        bdioEntries
     }
 }

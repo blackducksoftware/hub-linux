@@ -52,7 +52,7 @@ class AptListTest {
                 }
             }
         }
-
+        assertEquals(validEntryCount, bdioEntries.size())
         assertTrue(foundTargetEntry)
         println(bdioEntries.size())
     }

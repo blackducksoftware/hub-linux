@@ -4,3 +4,4 @@
 build/
 .gradle/
 bin/
+/Dpkg_Status_File_bdio.jsonld

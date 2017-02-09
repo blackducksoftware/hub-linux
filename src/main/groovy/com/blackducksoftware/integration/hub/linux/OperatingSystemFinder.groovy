@@ -23,6 +23,10 @@ class OperatingSystemFinder {
     void init() {
         def cmdObject = [command: 'lsb_release -a', prefixMatch:'Distributor ID:', delimeter:':']
         commandCheckList.add(cmdObject)
+        cmdObject = [command: 'cat /etc/os-release', prefixMatch:'ID=', delimeter:'=']
+        commandCheckList.add(cmdObject)
+        cmdObject = [command: 'cat /etc/lsb-release', prefixMatch:'DISTRIB_ID=', delimeter:'=']
+        commandCheckList.add(cmdObject)
     }
 
     OperatingSystemEnum determineOperatingSystem() {
@@ -54,71 +58,15 @@ class OperatingSystemFinder {
                 osName = replacedString
             }
         } catch(Exception e) {
-            logger.error("Error executing command {}", command,e)
+            logger.debug("Error executing command {}", command,e)
             osName = null
         }
 
         osName
     }
 
-    private String lsbCommandCheck() {
-        def proc = 'lsb_release -a'.execute()
-        proc.waitForOrKill(commandTimeout)
-
-        String output = proc.inputStream.text
-        output.tokenize(System.lineSeparator()).each {
-            if (it.startsWith('Distributor ID:')) {
-                return it.replace('Distributor ID:', '').trim()
-            }
-        }
-
-        ''
-    }
-
     private String lsbReleaseFileCheck() {
         def proc = 'cat /etc/lsb-release'.execute()
-        proc.waitForOrKill(commandTimeout)
-
-        String output = proc.inputStream.text
-        output.tokenize(System.lineSeparator()).each {
-            if (it.startsWith('DISTRIB_ID=')) {
-                return it.replace('DISTRIB_ID=', '').trim()
-            }
-        }
-
-        ''
-    }
-
-    private String issueFileCheck() {
-        def proc = 'cat /etc/issue.net'.execute()
-        proc.waitForOrKill(commandTimeout)
-
-        String output = proc.inputStream.text
-        output.tokenize(System.lineSeparator()).each {
-            if (it.startsWith('DISTRIB_ID=')) {
-                return it.replace('DISTRIB_ID=', '').trim()
-            }
-        }
-
-        ''
-    }
-
-    private String issueNetFileCheck() {
-        def proc = 'cat /etc/issue'.execute()
-        proc.waitForOrKill(commandTimeout)
-
-        String output = proc.inputStream.text
-        output.tokenize(System.lineSeparator()).each {
-            if (it.startsWith('DISTRIB_ID=')) {
-                return it.replace('DISTRIB_ID=', '').trim()
-            }
-        }
-
-        ''
-    }
-
-    private String debianVersionCheck() {
-        def proc = 'cat /etc/debian_version'.execute()
         proc.waitForOrKill(commandTimeout)
 
         String output = proc.inputStream.text
