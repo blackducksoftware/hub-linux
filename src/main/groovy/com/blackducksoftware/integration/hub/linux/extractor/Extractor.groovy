@@ -31,7 +31,7 @@ abstract class Extractor {
         def (hubProjectName, hubProjectVersionName, forge, packageManager) = inputFile.name.split(filenameSeparator)
         OperatingSystemEnum operatingSystemEnum = OperatingSystemEnum.determineOperatingSystem(forge)
 
-        def components = extractComponents(operatingSystemEnum, inputFile)
+        def components = extractComponents(inputFile)
 
         new ExtractionResults(hubProjectName: hubProjectName, hubProjectVersionName: hubProjectVersionName, operatingSystemEnum: operatingSystemEnum, bdioComponentDetailsList: components)
     }
