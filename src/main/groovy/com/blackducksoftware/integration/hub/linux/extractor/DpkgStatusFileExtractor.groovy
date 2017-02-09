@@ -38,32 +38,32 @@ class DpkgStatusFileExtractor extends Extractor {
 
         DpkgStatusFilePackage dpkgPackage = new DpkgStatusFilePackage()
         yumOutput.eachLine { line ->
-            if(line != null){
-                if(StringUtils.isBlank(line)){
-                    if(!dpkgPackage.isEmpty()){
+            if (line != null){
+                if (StringUtils.isBlank(line)){
+                    if (!dpkgPackage.isEmpty()){
                         logger.error("Component was missing information : ${dpkgPackage.toString()}")
                     }
                     dpkgPackage = new DpkgStatusFilePackage()
                     packageSeparators++
-                } else if(line.contains('Package:')){
+                } else if (line.contains('Package:')){
                     def name = line.replace('Package:', '')
                     dpkgPackage.name = name.trim()
-                }else if(line.contains('Architecture:')){
+                }else if (line.contains('Architecture:')){
                     def architecture = line.replace('Architecture:', '')
                     dpkgPackage.architecture = architecture.trim()
-                }else if(line.contains('Version:')){
+                }else if (line.contains('Version:')){
                     def version = line.replace('Version:', '')
                     dpkgPackage.version = version.trim()
-                }else if(line.contains('Status:')){
-                    if(line.contains('Status: install ok installed')){
+                } else if (line.contains('Status:')){
+                    if (line.contains('Status: install ok installed')){
                         dpkgPackage.installed = true
                     } else {
                         logger.error("This Component was not installed successfully : ${dpkgPackage.toString()}")
                         logger.error("$line")
                         dpkgPackage.installed = true
                     }
-                }else if(dpkgPackage.isComplete()){
-                    if(dpkgPackage.installed){
+                } else if (dpkgPackage.isComplete()) {
+                    if (dpkgPackage.installed) {
                         def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId())
                         components.add(bdioComponentDetails)
                     }
