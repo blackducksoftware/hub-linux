@@ -5,7 +5,7 @@ enum PackageManagerEnum {
     YUM('yum.txt'),
     RPM('rpm.txt'),
     DPKG('dpkg.txt'),
-    DPKGSTATUSFILE('status')
+    DPKG_STATUS_FILE('status')
 
     String filenameSuffix
 

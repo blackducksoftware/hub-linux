@@ -16,17 +16,16 @@ import static org.junit.Assert.*
 import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
-import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 
 class DpkgExtractorTest {
     @Test
     public void extractDpkgComponentsFile1(){
-        extractDpkgComponentsFromFile('ubuntu_dpkg_output_1.txt',745,'linux-headers-3.13.0-107-generic','3.13.0-107.154','amd64')
+        extractDpkgComponentsFromFile('ubuntu_dpkg_output_1.txt',4470,'linux-headers-3.13.0-107-generic','3.13.0-107.154','amd64')
     }
 
     @Test
     public void extractDpkgComponentsFile2(){
-        extractDpkgComponentsFromFile('ubuntu_dpkg_output_2.txt',98,'sed','4.2.2-7','amd64')
+        extractDpkgComponentsFromFile('ubuntu_dpkg_output_2.txt',588,'sed','4.2.2-7','amd64')
     }
 
 
@@ -35,7 +34,7 @@ class DpkgExtractorTest {
         File file = new File(URLDecoder.decode(url.getFile(), 'UTF-8'))
 
         DpkgExtractor extractor = new DpkgExtractor()
-        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(OperatingSystemEnum.UBUNTU, file)
+        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(file)
 
         assertEquals(size, bdioEntries.size())
         boolean foundTargetEntry = false

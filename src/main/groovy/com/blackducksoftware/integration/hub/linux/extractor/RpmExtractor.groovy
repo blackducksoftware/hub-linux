@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
-import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 @Component
@@ -30,20 +29,16 @@ class RpmExtractor extends Extractor {
         initValues(PackageManagerEnum.RPM)
     }
 
-    @Override
-    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File inputFile) {
+    List<BdioComponentDetails> extractComponents(File inputFile) {
         def components = []
         inputFile.eachLine { line ->
-            BdioComponentDetails componentDetails = extract(operatingSystemEnum, line)
-            if(componentDetails != null){
-                components.add(componentDetails)
-            }
+            extract(components, line)
         }
 
         components
     }
 
-    BdioComponentDetails extract(OperatingSystemEnum operatingSystemEnum, String inputLine) {
+    void extract(List<BdioComponentDetails> components, String inputLine) {
         if (valid(inputLine)) {
             def lastDotIndex = inputLine.lastIndexOf('.')
             def arch = inputLine.substring(lastDotIndex + 1)
@@ -55,13 +50,38 @@ class RpmExtractor extends Extractor {
             def artifact = inputLine.substring(0, secondToLastDashIndex)
 
             String externalId = "${artifact}/${versionRelease}/${arch}"
-            return createBdioComponentDetails(operatingSystemEnum, artifact, versionRelease, externalId)
+            addToBdioComponentDetails(components, artifact, versionRelease, externalId)
+            //components.add(createBdioComponentDetails(artifact, versionRelease, externalId))
         }
-
-        null
     }
 
     boolean valid(String inputLine) {
         inputLine.matches(".+-.+-.+\\..*")
     }
+
+    //    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File inputFile) {
+    //        def components = []
+    //        inputFile.eachLine { line ->
+    //            extract(components,operatingSystemEnum, line)
+    //        }
+    //
+    //        components
+    //    }
+    //
+    //    void extract(List<BdioComponentDetails> components, OperatingSystemEnum operatingSystemEnum, String inputLine) {
+    //        if (valid(inputLine)) {
+    //            def lastDotIndex = inputLine.lastIndexOf('.')
+    //            def arch = inputLine.substring(lastDotIndex + 1)
+    //            def lastDashIndex = inputLine.lastIndexOf('-')
+    //            def nameVersion = inputLine.substring(0, lastDashIndex)
+    //            def secondToLastDashIndex = nameVersion.lastIndexOf('-')
+    //
+    //            def versionRelease = inputLine.substring(secondToLastDashIndex + 1, lastDotIndex)
+    //            def artifact = inputLine.substring(0, secondToLastDashIndex)
+    //
+    //            String externalId = "${artifact}/${versionRelease}/${arch}"
+    //            addToBdioComponentDetails(components, artifact, versionRelease, externalId)
+    //            components.add(createBdioComponentDetails(operatingSystemEnum, artifact, versionRelease, externalId))
+    //        }
+    //    }
 }

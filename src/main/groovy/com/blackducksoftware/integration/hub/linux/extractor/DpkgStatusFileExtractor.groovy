@@ -18,7 +18,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
-import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 import com.blackducksoftware.integration.hub.linux.extractor.data.DpkgStatusFilePackage
 
@@ -27,10 +26,10 @@ class DpkgStatusFileExtractor extends Extractor {
 
     @PostConstruct
     void init() {
-        initValues(PackageManagerEnum.DPKGSTATUSFILE)
+        initValues(PackageManagerEnum.DPKG_STATUS_FILE)
     }
 
-    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File yumOutput) {
+    List<BdioComponentDetails> extractComponents(File yumOutput) {
         def components = []
         boolean startOfComponents = false
 
@@ -62,10 +61,14 @@ class DpkgStatusFileExtractor extends Extractor {
                         logger.error("$line")
                         dpkgPackage.installed = true
                     }
-                } else if (dpkgPackage.isComplete()) {
-                    if (dpkgPackage.installed) {
-                        def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId())
-                        components.add(bdioComponentDetails)
+                } else if (dpkgPackage.isComplete()){
+                    if(dpkgPackage.installed){
+                        addToBdioComponentDetails(components,dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId())
+                        //                        OperatingSystemEnum.each{operatingSystem ->
+                        //                            components.add(createBdioComponentDetails(operatingSystem, dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId()))
+                        //                        }
+                        //                        def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId())
+                        //                        components.add(bdioComponentDetails)
                     }
                     dpkgPackage = new DpkgStatusFilePackage()
                 }
@@ -74,4 +77,53 @@ class DpkgStatusFileExtractor extends Extractor {
         logger.debug("Package Separators : $packageSeparators")
         components
     }
+
+    //    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File yumOutput) {
+    //        def components = []
+    //        boolean startOfComponents = false
+    //
+    //        int packageSeparators = 0;
+    //
+    //        DpkgStatusFilePackage dpkgPackage = new DpkgStatusFilePackage()
+    //        yumOutput.eachLine { line ->
+    //            if(line != null){
+    //                if(StringUtils.isBlank(line)){
+    //                    if(!dpkgPackage.isEmpty()){
+    //                        logger.error("Component was missing information : ${dpkgPackage.toString()}")
+    //                    }
+    //                    dpkgPackage = new DpkgStatusFilePackage()
+    //                    packageSeparators++
+    //                } else if(line.contains('Package:')){
+    //                    def name = line.replace('Package:', '')
+    //                    dpkgPackage.name = name.trim()
+    //                }else if(line.contains('Architecture:')){
+    //                    def architecture = line.replace('Architecture:', '')
+    //                    dpkgPackage.architecture = architecture.trim()
+    //                }else if(line.contains('Version:')){
+    //                    def version = line.replace('Version:', '')
+    //                    dpkgPackage.version = version.trim()
+    //                }else if(line.contains('Status:')){
+    //                    if(line.contains('Status: install ok installed')){
+    //                        dpkgPackage.installed = true
+    //                    } else {
+    //                        logger.error("This Component was not installed successfully : ${dpkgPackage.toString()}")
+    //                        logger.error("$line")
+    //                        dpkgPackage.installed = true
+    //                    }
+    //                }else if(dpkgPackage.isComplete()){
+    //                    if(dpkgPackage.installed){
+    //                        addToBdioComponentDetails(components,dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId())
+    //                        //                        OperatingSystemEnum.each{operatingSystem ->
+    //                        //                            components.add(createBdioComponentDetails(operatingSystem, dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId()))
+    //                        //                        }
+    //                        //                        def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId())
+    //                        //                        components.add(bdioComponentDetails)
+    //                    }
+    //                    dpkgPackage = new DpkgStatusFilePackage()
+    //                }
+    //            }
+    //        }
+    //        logger.debug("Package Separators : $packageSeparators")
+    //        components
+    //    }
 }

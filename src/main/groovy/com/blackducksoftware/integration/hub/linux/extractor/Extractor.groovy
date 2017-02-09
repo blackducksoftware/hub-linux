@@ -15,7 +15,9 @@ abstract class Extractor {
     PackageManagerEnum packageManagerEnum
 
     abstract void init()
-    abstract List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File inputFile)
+    //abstract List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File inputFile)
+
+    abstract List<BdioComponentDetails> extractComponents(File inputFile)
 
     void initValues(PackageManagerEnum packageManagerEnum) {
         this.packageManagerEnum = packageManagerEnum
@@ -29,9 +31,16 @@ abstract class Extractor {
         def (hubProjectName, hubProjectVersionName, forge, packageManager) = inputFile.name.split(filenameSeparator)
         OperatingSystemEnum operatingSystemEnum = OperatingSystemEnum.determineOperatingSystem(forge)
 
-        def components = extractComponents(operatingSystemEnum, inputFile)
+        def components = extractComponents(inputFile)
 
         new ExtractionResult(hubProjectName: hubProjectName, hubProjectVersionName: hubProjectVersionName, operatingSystemEnum: operatingSystemEnum, bdioComponentDetailsList: components)
+    }
+
+    void addToBdioComponentDetails(List<BdioComponentDetails> componentDetails, String name, String version, String externalId) {
+        OperatingSystemEnum.each { operatingSystem ->
+            createBdioComponentDetails(operatingSystem, name, version,externalId)
+            componentDetails.add(createBdioComponentDetails(operatingSystem, name, version, externalId))
+        }
     }
 
     BdioComponentDetails createBdioComponentDetails(OperatingSystemEnum operatingSystemEnum, String name, String version, String externalId) {

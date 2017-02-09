@@ -17,12 +17,11 @@ import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
 import com.blackducksoftware.integration.hub.linux.BdioFileWriter
-import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 
 class DpkgStatusFileExtractorTest {
     @Test
     public void extractDpkgComponentsFromStatusFile1(){
-        List<BdioComponentDetails> bdioEntries= extractDpkgComponentsFromStatusFile('status',98,'libpam-modules-bin','1.1.8-3.2ubuntu2','amd64')
+        List<BdioComponentDetails> bdioEntries= extractDpkgComponentsFromStatusFile('status',588,'libpam-modules-bin','1.1.8-3.2ubuntu2','amd64')
         def outputFile = new File(new File('.'), "Dpkg_Status_File_bdio.jsonld")
         if(outputFile.exists()){
             outputFile.delete()
@@ -47,7 +46,7 @@ class DpkgStatusFileExtractorTest {
         File file = new File(URLDecoder.decode(url.getFile(), 'UTF-8'))
 
         DpkgStatusFileExtractor extractor = new DpkgStatusFileExtractor()
-        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(OperatingSystemEnum.DEBIAN, file)
+        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(file)
 
         assertEquals(size, bdioEntries.size())
         boolean foundTargetEntry = false
