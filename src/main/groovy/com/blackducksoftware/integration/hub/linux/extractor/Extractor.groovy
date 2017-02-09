@@ -33,7 +33,7 @@ abstract class Extractor {
 
         def components = extractComponents(inputFile)
 
-        new ExtractionResult(hubProjectName: hubProjectName, hubProjectVersionName: hubProjectVersionName, operatingSystemEnum: operatingSystemEnum, bdioComponentDetailsList: components)
+        new ExtractionResult(hubProjectName: hubProjectName, hubProjectVersionName: hubProjectVersionName, bdioComponentDetailsList: components)
     }
 
     void addToBdioComponentDetails(List<BdioComponentDetails> componentDetails, String name, String version, String externalId) {

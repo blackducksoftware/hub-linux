@@ -1,5 +1,6 @@
 package com.blackducksoftware.integration.hub.linux
 
+
 class ExtractionResults {
     private Map<String, Map<String, List<ExtractionResult>>> projectToVersionsWithComponents = [:]
 
@@ -21,10 +22,17 @@ class ExtractionResults {
     }
 
     List<ExtractionResult> getExtractionResults() {
+        def extractionResults = []
+
         for (String project : projectToVersionsWithComponents.keySet()) {
             Map<String, List<BdioComponentDetails>> versionToComponents = projectToVersionsWithComponents.get(project)
             for (String version : versionToComponents.keySet()) {
+                def components = versionToComponents.get(version)
+                def extractionResult = new ExtractionResult(hubProjectName: project, hubProjectVersionName:version, bdioComponentDetailsList: components)
+                extractionResults.add(extractionResult)
             }
         }
+
+        extractionResults
     }
 }
