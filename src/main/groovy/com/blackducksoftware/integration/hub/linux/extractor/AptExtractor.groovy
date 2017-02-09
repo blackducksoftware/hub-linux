@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
-import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 @Component
@@ -31,30 +30,50 @@ class AptExtractor extends Extractor {
     }
 
     @Override
-    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File inputFile) {
+    List<BdioComponentDetails> extractComponents(File inputFile) {
         def components = []
 
         inputFile.eachLine { line ->
-            def component = extract(operatingSystemEnum, line)
-            if (component != null) {
-                components.add(component)
-            }
+            extract(components, line)
         }
 
         components
     }
 
-    BdioComponentDetails extract(OperatingSystemEnum operatingSystemEnum, String inputLine) {
+    void extract(List<BdioComponentDetails> components, String inputLine) {
         if (inputLine.contains(' ')) {
             def (packageName, version) = inputLine.split(' ')
             def index = packageName.indexOf('/')
             if (index > 0) {
                 def component = packageName.substring(0, index)
                 String externalId = "${component}/${version}"
-                return createBdioComponentDetails(operatingSystemEnum, component, version, externalId)
+                addToBdioComponentDetails(components, component, version, externalId)
+                // components.add(createBdioComponentDetails(operatingSystemEnum, component, version, externalId))
             }
         }
-
-        null
     }
+
+    //    @Override
+    //    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File inputFile) {
+    //        def components = []
+    //
+    //        inputFile.eachLine { line ->
+    //            extract(components,operatingSystemEnum, line)
+    //        }
+    //
+    //        components
+    //    }
+    //
+    //    void extract(List<BdioComponentDetails> components, OperatingSystemEnum operatingSystemEnum, String inputLine) {
+    //        if (inputLine.contains(' ')) {
+    //            def (packageName, version) = inputLine.split(' ')
+    //            def index = packageName.indexOf('/')
+    //            if (index > 0) {
+    //                def component = packageName.substring(0, index)
+    //                String externalId = "${component}/${version}"
+    //                addToBdioComponentDetails(components, component, version, externalId)
+    //                // components.add(createBdioComponentDetails(operatingSystemEnum, component, version, externalId))
+    //            }
+    //        }
+    //    }
 }
