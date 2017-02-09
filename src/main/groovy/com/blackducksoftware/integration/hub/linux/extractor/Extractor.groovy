@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 
 import com.blackducksoftware.bdio.model.ExternalIdentifier
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
-import com.blackducksoftware.integration.hub.linux.ExtractionResults
+import com.blackducksoftware.integration.hub.linux.ExtractionResult
 import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
@@ -25,13 +25,13 @@ abstract class Extractor {
         packageManagerEnum.fileMatches(file)
     }
 
-    ExtractionResults extract(File inputFile) {
+    ExtractionResult extract(File inputFile) {
         def (hubProjectName, hubProjectVersionName, forge, packageManager) = inputFile.name.split(filenameSeparator)
         OperatingSystemEnum operatingSystemEnum = OperatingSystemEnum.determineOperatingSystem(forge)
 
         def components = extractComponents(operatingSystemEnum, inputFile)
 
-        new ExtractionResults(hubProjectName: hubProjectName, hubProjectVersionName: hubProjectVersionName, operatingSystemEnum: operatingSystemEnum, bdioComponentDetailsList: components)
+        new ExtractionResult(hubProjectName: hubProjectName, hubProjectVersionName: hubProjectVersionName, operatingSystemEnum: operatingSystemEnum, bdioComponentDetailsList: components)
     }
 
     BdioComponentDetails createBdioComponentDetails(OperatingSystemEnum operatingSystemEnum, String name, String version, String externalId) {

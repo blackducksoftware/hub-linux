@@ -77,56 +77,45 @@ class HubLinuxManager {
         createAndUploadBdioFile(workingDirectory, allExtractionResults)
     }
 
-    private Map extractAllBdioComponentDetailsFromWorkingDirectory(File workingDirectory) {
-        def projectToVersionsWithComponents = [:]
+    private ExtractionResults extractAllBdioComponentDetailsFromWorkingDirectory(File workingDirectory) {
+        def allExtractionResults = new ExtractionResults()
         workingDirectory.eachFile() { file ->
             logger.info("Processing file ${file.name}")
             extractors.each { extractor ->
                 if (extractor.shouldAttemptExtract(file)) {
                     logger.info("Extracting ${file.name} with ${extractor.getClass().name}")
-                    def extractionResults = extractor.extract(file)
-                    def project = extractionResults.hubProjectName
-                    def version = extractionResults.hubProjectVersionName
-                    def components = extractionResults.bdioComponentDetailsList
-                    if (projectToVersionsWithComponents.containsKey(project)) {
-                        if (projectToVersionsWithComponents.get(project).containsKey(version)) {
-                            projectToVersionsWithComponents.get(project).get(version).addAll(components)
-                        } else {
-                            projectToVersionsWithComponents.get(project).put(version, components)
-                        }
-                    } else {
-                        Map<String, List<BdioComponentDetails>> versionToComponents = new HashMap<>()
-                        versionToComponents.put(version, components)
-                        projectToVersionsWithComponents.put(project, versionToComponents)
-                    }
+                    def extractionResult = extractor.extract(file)
+                    allExtractionResults.addExtractionResult(extractionResult)
                 }
             }
         }
 
-        projectToVersionsWithComponents
+        allExtractionResults
     }
 
-    private createAndUploadBdioFile(File workingDirectory, Map projectToVersionsWithComponents) {
-        for (String project : projectToVersionsWithComponents.keySet()) {
-            Map<String, List<BdioComponentDetails>> versionToComponents = projectToVersionsWithComponents.get(project)
-            for (String version : versionToComponents.keySet()) {
-                def outputFile = new File(workingDirectory, "${project}_${version}_bdio.jsonld")
-                logger.info("Starting bdio creation using file: ${outputFile.canonicalPath} containing ${versionToComponents.get(version).size()} components")
-                new FileOutputStream(outputFile).withStream { outputStream ->
-                    def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, project, version)
-                    try {
-                        for (BdioComponentDetails bdioComponent : versionToComponents.get(version)) {
-                            bdioFileWriter.writeComponent(bdioWriter, bdioComponent)
-                        }
-                    } finally {
-                        bdioWriter.close()
-                    }
-                }
+    private createAndUploadBdioFile(File workingDirectory, ExtractionResults allExtractionResults) {
+        def extractionResults = allExtractionResults.getExtractionResults()
+        extractionResults.each { extractionResult ->
+            def project = extractionResult.hubProjectName
+            def version = extractionResult.hubProjectVersionName
+            def components = extractionResult.bdioComponentDetailsList
 
-                if (hubClient.isValid()) {
-                    hubClient.uploadBdioToHub(outputFile)
-                    logger.info("Uploaded bdio to ${hubClient.hubUrl}")
+            def outputFile = new File(workingDirectory, "${project}_${version}_bdio.jsonld")
+            logger.info("Starting bdio creation using file: ${outputFile.canonicalPath} containing ${components.size()} components")
+            new FileOutputStream(outputFile).withStream { outputStream ->
+                def bdioWriter = bdioFileWriter.createBdioWriter(outputStream, project, version)
+                try {
+                    components.each { component ->
+                        bdioFileWriter.writeComponent(bdioWriter, component)
+                    }
+                } finally {
+                    bdioWriter.close()
                 }
+            }
+
+            if (hubClient.isValid()) {
+                hubClient.uploadBdioToHub(outputFile)
+                logger.info("Uploaded bdio to ${hubClient.hubUrl}")
             }
         }
     }
