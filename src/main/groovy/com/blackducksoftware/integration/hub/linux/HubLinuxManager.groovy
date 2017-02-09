@@ -39,6 +39,11 @@ class HubLinuxManager {
     List<Extractor> extractors
 
     void performExtractFromRemoteInspection() {
+        def workingDirectory = new File(workingDirectoryPath)
+        workingDirectory.mkdirs()
+
+        def allExtractionResults = extractAllBdioComponentDetailsFromWorkingDirectory(workingDirectory)
+        createAndUploadBdioFile(workingDirectory, allExtractionResults)
     }
 
     void performExtractFromLocalInspection() {
