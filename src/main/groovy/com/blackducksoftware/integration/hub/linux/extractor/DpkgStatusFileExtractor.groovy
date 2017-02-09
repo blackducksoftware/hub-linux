@@ -55,13 +55,18 @@ class DpkgStatusFileExtractor extends Extractor {
                     def version = line.replace('Version:', '')
                     dpkgPackage.version = version.trim()
                 }else if(line.contains('Status:')){
-                    if(!line.contains('Status: install ok installed')){
+                    if(line.contains('Status: install ok installed')){
+                        dpkgPackage.installed = true
+                    } else {
                         logger.error("This Component was not installed successfully : ${dpkgPackage.toString()}")
                         logger.error("$line")
+                        dpkgPackage.installed = true
                     }
                 }else if(dpkgPackage.isComplete()){
-                    def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId())
-                    components.add(bdioComponentDetails)
+                    if(dpkgPackage.installed){
+                        def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, dpkgPackage.name, dpkgPackage.version, dpkgPackage.getExternalId())
+                        components.add(bdioComponentDetails)
+                    }
                     dpkgPackage = new DpkgStatusFilePackage()
                 }
             }

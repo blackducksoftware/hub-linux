@@ -20,16 +20,17 @@ class DpkgStatusFilePackage {
     String name
     String version
     String architecture
+    Boolean installed
 
     String getExternalId(){
         "$name/$version/$architecture"
     }
 
     boolean isEmpty(){
-        name == null && version == null && architecture == null
+        name == null && version == null && architecture == null && installed == null
     }
 
     boolean isComplete(){
-        StringUtils.isNotBlank(name) && StringUtils.isNotBlank(version) && StringUtils.isNotBlank(architecture)
+        StringUtils.isNotBlank(name) && StringUtils.isNotBlank(version) && StringUtils.isNotBlank(architecture) && installed != null
     }
 }
