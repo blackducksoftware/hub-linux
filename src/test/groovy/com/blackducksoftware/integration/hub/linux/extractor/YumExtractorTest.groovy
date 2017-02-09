@@ -56,7 +56,7 @@ class YumExtractorTest {
                 }
             }
         }
-
+        assertEquals(validEntryCount, bdioEntries.size())
         assertTrue(foundTargetEntry)
         println(bdioEntries.size())
     }

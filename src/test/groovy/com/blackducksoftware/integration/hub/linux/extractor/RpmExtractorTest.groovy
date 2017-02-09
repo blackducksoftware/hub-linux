@@ -65,6 +65,7 @@ class RpmExtractorTest {
                 }
             }
         }
+        assertEquals(validEntryCount, bdioEntries.size())
         assertTrue(foundTargetEntry)
         println(bdioEntries.size())
     }
