@@ -35,9 +35,6 @@ class HubClient {
     @Value('${hub.proxy.port}')
     String hubProxyPort
 
-    @Value('${hub.proxy.ignored.proxy.hosts}')
-    String hubProxyIgnoredProxyHosts
-
     @Value('${hub.proxy.username}')
     String hubProxyUsername
 
@@ -77,7 +74,6 @@ class HubClient {
         hubServerConfigBuilder.timeout = hubTimeout
         hubServerConfigBuilder.proxyHost = hubProxyHost
         hubServerConfigBuilder.proxyPort = hubProxyPort
-        hubServerConfigBuilder.ignoredProxyHosts = hubProxyIgnoredProxyHosts
         hubServerConfigBuilder.proxyUsername = hubProxyUsername
         hubServerConfigBuilder.proxyPassword = hubProxyPassword
 
