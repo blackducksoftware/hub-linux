@@ -28,8 +28,6 @@ class Application {
 
     @PostConstruct
     void init() {
-        logger.info 'Hello Team!!!'
-
         try {
             hubClient.testHubConnection()
             logger.info 'Your Hub configuration is valid and a successful connection to the Hub was established.'
