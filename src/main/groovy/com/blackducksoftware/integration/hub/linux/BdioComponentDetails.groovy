@@ -1,19 +1,19 @@
 package com.blackducksoftware.integration.hub.linux
 
-import com.blackducksoftware.bdio.model.Component
-import com.blackducksoftware.bdio.model.ExternalIdentifier
+import com.blackducksoftware.integration.hub.bdio.simple.model.BdioComponent
+import com.blackducksoftware.integration.hub.bdio.simple.model.BdioExternalIdentifier
 
 class BdioComponentDetails {
     String name
     String version
-    ExternalIdentifier externalIdentifier
+    BdioExternalIdentifier externalIdentifier
 
-    Component createBdioComponent() {
-        def component = new Component()
+    BdioComponent createBdioComponent() {
+        def component = new BdioComponent()
         component.id = "uuid:${UUID.randomUUID()}"
         component.name = name
         component.version = version
-        component.addExternalIdentifier(externalIdentifier)
+        component.bdioExternalIdentifier = externalIdentifier
 
         component
     }

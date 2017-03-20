@@ -4,32 +4,28 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
-import com.blackducksoftware.bdio.io.BdioWriter
-import com.blackducksoftware.bdio.io.LinkedDataContext
-import com.blackducksoftware.bdio.model.BillOfMaterials
-import com.blackducksoftware.bdio.model.CreationInfo
-import com.blackducksoftware.bdio.model.Project
+import com.blackducksoftware.integration.hub.bdio.simple.BdioNodeFactory
+import com.blackducksoftware.integration.hub.bdio.simple.BdioPropertyHelper
+import com.blackducksoftware.integration.hub.bdio.simple.BdioWriter
+import com.google.gson.Gson
 
 @Component
 class BdioFileWriter {
     private final Logger logger = LoggerFactory.getLogger(BdioFileWriter.class)
+    private final Gson gson = new Gson()
+    private final BdioPropertyHelper bdioPropertyHelper = new BdioPropertyHelper()
+    private final BdioNodeFactory bdioNodeFactory = new BdioNodeFactory(bdioPropertyHelper)
+
 
     BdioWriter createBdioWriter(final OutputStream outputStream, final String projectName, final String projectVersion) {
-        def linkedDataContext = new LinkedDataContext()
-        def bdioWriter = new BdioWriter(linkedDataContext, outputStream)
+        def bdioWriter = new BdioWriter(gson, outputStream)
 
-        def bom = new BillOfMaterials()
-        bom.id = "uuid:${UUID.randomUUID()}"
-        bom.name = "${projectName} Black Duck I/O Export"
-        bom.specVersion = linkedDataContext.getSpecVersion()
-        bom.creationInfo = CreationInfo.currentTool()
-        bdioWriter.write(bom)
+        def bom = bdioNodeFactory.createBillOfMaterials(projectName)
 
-        def project = new Project()
-        project.id = "uuid:${UUID.randomUUID()}"
-        project.name = projectName
-        project.version = projectVersion
-        bdioWriter.write(project)
+        bdioWriter.writeBdioNode(bom)
+
+        def project = bdioNodeFactory.createProject(projectName, projectVersion, "uuid:${UUID.randomUUID()}", null)
+        bdioWriter.writeBdioNode(project)
 
         bdioWriter
     }
@@ -40,6 +36,6 @@ class BdioFileWriter {
             return;
         }
         def component = bdioComponentDetails.createBdioComponent()
-        bdioWriter.write(component)
+        bdioWriter.writeBdioNode(component)
     }
 }

@@ -11,7 +11,7 @@ class ExtractorTest {
     void testCreatingCentosExternalIdentifier() {
         def extractor = [init: {}] as Extractor
         def externalIdentifier = extractor.createLinuxIdentifier(OperatingSystemEnum.CENTOS, 'name/version')
-        assertEquals('centos', externalIdentifier.externalSystemTypeId)
+        assertEquals('centos', externalIdentifier.forge)
         assertEquals('name/version', externalIdentifier.externalId)
     }
 }

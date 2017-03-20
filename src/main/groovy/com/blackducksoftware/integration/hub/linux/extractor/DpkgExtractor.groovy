@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 @Component
@@ -25,7 +26,7 @@ class DpkgExtractor extends Extractor {
         initValues(PackageManagerEnum.DPKG)
     }
 
-    List<BdioComponentDetails> extractComponents( File yumOutput) {
+    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystem, File yumOutput) {
         def components = []
 
         boolean startOfComponents = false
@@ -38,34 +39,10 @@ class DpkgExtractor extends Extractor {
                     def(name,version,architecture,description) = componentInfo.tokenize(" ")
 
                     String externalId = "$name/$version/$architecture"
-                    addToBdioComponentDetails(components, name, version, externalId)
-                    //                    def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, name, version, externalId)
-                    //                    components.add(bdioComponentDetails)
+                    components.add(createBdioComponentDetails(operatingSystem, name, version, externalId))
                 }
             }
         }
         components
     }
-
-    //    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File yumOutput) {
-    //        def components = []
-    //
-    //        boolean startOfComponents = false
-    //        yumOutput.eachLine { line ->
-    //            if (line != null) {
-    //                if (line.matches("\\+\\+\\+-=+-=+-=+-=+")) {
-    //                    startOfComponents = true
-    //                } else if (startOfComponents){
-    //                    String componentInfo = line.substring(3)
-    //                    def(name,version,architecture,description) = componentInfo.tokenize(" ")
-    //
-    //                    String externalId = "$name/$version/$architecture"
-    //                    addToBdioComponentDetails(components, name, version, externalId)
-    //                    //                    def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, name, version, externalId)
-    //                    //                    components.add(bdioComponentDetails)
-    //                }
-    //            }
-    //        }
-    //        components
-    //    }
 }

@@ -16,6 +16,7 @@ import static org.junit.Assert.*
 import org.junit.Test
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 
 class YumExtractorTest {
     @Test
@@ -38,7 +39,7 @@ class YumExtractorTest {
         File file = new File(URLDecoder.decode(url.getFile(), 'UTF-8'))
 
         YumExtractor extractor = new YumExtractor()
-        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(file)
+        List<BdioComponentDetails> bdioEntries =  extractor.extractComponents(OperatingSystemEnum.UBUNTU , file)
 
         // assertEquals(size, bdioEntries.size())
         boolean foundTargetEntry = false
@@ -48,10 +49,10 @@ class YumExtractorTest {
                 validEntryCount++
                 // println(bdioEntry.getExternalIdentifier())
                 def match = String.join("/",name,version,arch)
-                if (match.contentEquals(bdioEntry.getExternalIdentifier().getExternalId())) {
+                if (match.contentEquals(bdioEntry.externalIdentifier.externalId)) {
                     foundTargetEntry = true
-                    assertEquals(name, bdioEntry.getName())
-                    assertEquals(version, bdioEntry.getVersion())
+                    assertEquals(name, bdioEntry.name)
+                    assertEquals(version, bdioEntry.version)
                 }
             }
         }

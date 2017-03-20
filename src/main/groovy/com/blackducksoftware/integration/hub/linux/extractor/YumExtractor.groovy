@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 import com.blackducksoftware.integration.hub.linux.BdioComponentDetails
+import com.blackducksoftware.integration.hub.linux.OperatingSystemEnum
 import com.blackducksoftware.integration.hub.linux.PackageManagerEnum
 
 @Component
@@ -29,7 +30,7 @@ class YumExtractor extends Extractor {
         initValues(PackageManagerEnum.YUM)
     }
 
-    List<BdioComponentDetails> extractComponents( File yumOutput) {
+    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystem,  File yumOutput) {
         def components = []
         boolean startOfComponents = false
 
@@ -47,9 +48,7 @@ class YumExtractor extends Extractor {
                         String architecture = nameArch.substring(nameArch.lastIndexOf(".") + 1)
 
                         String externalId = "$name/$version/$architecture"
-                        addToBdioComponentDetails(components,name, version, externalId)
-                        //                        def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, name, version, externalId)
-                        //                        components.add(bdioComponentDetails)
+                        components.add(createBdioComponentDetails(operatingSystem, name, version, externalId))
                         componentColumns = []
                     } else  if (componentColumns.size() > 3) {
                         logger.error("Parsing multi-line components has failed. $line")
@@ -61,37 +60,4 @@ class YumExtractor extends Extractor {
 
         components
     }
-
-    //    List<BdioComponentDetails> extractComponents(OperatingSystemEnum operatingSystemEnum, File yumOutput) {
-    //        def components = []
-    //        boolean startOfComponents = false
-    //
-    //        def componentColumns = []
-    //        yumOutput.eachLine { line ->
-    //            if (line != null) {
-    //                if ('Installed Packages' == line) {
-    //                    startOfComponents = true
-    //                } else if (startOfComponents) {
-    //                    componentColumns.addAll(line.tokenize(' '))
-    //                    if ((componentColumns.size() == 3) && (!line.startsWith("Loaded plugins:"))) {
-    //                        String nameArch = componentColumns.get(0)
-    //                        String version = componentColumns.get(1)
-    //                        String name =nameArch.substring(0, nameArch.lastIndexOf("."))
-    //                        String architecture = nameArch.substring(nameArch.lastIndexOf(".") + 1)
-    //
-    //                        String externalId = "$name/$version/$architecture"
-    //                        addToBdioComponentDetails(components,name, version, externalId)
-    //                        //                        def bdioComponentDetails = createBdioComponentDetails(operatingSystemEnum, name, version, externalId)
-    //                        //                        components.add(bdioComponentDetails)
-    //                        componentColumns = []
-    //                    } else  if (componentColumns.size() > 3) {
-    //                        logger.error("Parsing multi-line components has failed. $line")
-    //                        componentColumns = []
-    //                    }
-    //                }
-    //            }
-    //        }
-    //
-    //        components
-    //    }
 }
